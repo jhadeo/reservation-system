@@ -23,19 +23,18 @@
     @endif
 </head>
 
-<body class="p-6">
-    <header class="flex justify-between align overflow-auto">
-        <h1>Reservation System</h1>
-        <nav role="navigation" class="flex align-middle gap-2">
+<body>
+    <header class="flex justify-between align-middle items-center sticky top-0 z-50 bg-white shadow-md p-4 text-sm md:text-base text-center">
+        <h1>Company name</h1>
+        <nav role="navigation" class="flex items-center gap-4">
             <a href="/">Home</a>
-            <a href="/about">About Us</a>
+            <a href="/about">About</a>
             <a href="/contact">Contact</a>
+            <a href="/reserve-slot" class="px-4 py-2 rounded-2xl bg-black text-white font-bold">Reserve a slot now!</a>
         </nav>
     </header>
 
-    <main class="my-6">
         {{$slot}}
-    </main>
 
 </body>
 
