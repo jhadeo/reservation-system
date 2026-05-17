@@ -16,9 +16,8 @@ class Room extends Model
         ];
     }
 
-    public function room_type() : BelongsTo{
+    public function roomType(): BelongsTo
+    {
         return $this->belongsTo(RoomType::class);
     }
-
-
 }

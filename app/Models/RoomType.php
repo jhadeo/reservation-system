@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'description'])]
 class RoomType extends Model
 {
-    public function rooms() : HasOneOrMany {
-        return $this->hasOneOrMany(Room::class);
+    public function rooms() : HasMany {
+        return $this->hasMany(Room::class);
     }
 }
