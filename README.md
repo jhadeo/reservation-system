@@ -1,3 +1,3 @@
-## Reservation System
+## Hotel Reservation System
 
-Project to convert past Java and Vanilla PHP projects into a Laravel app
+Project to convert a past Java project into a Laravel app
