@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-#[Fillable(['name', 'hourly_rate', 'max_pax', 'photo', 'description', 'type', 'is_available'])]
+#[Fillable(['name', 'hourly_rate', 'max_pax', 'photo', 'description', 'room_type_id', 'is_available'])]
 class Room extends Model
 {
     protected function casts(): array
@@ -17,11 +16,9 @@ class Room extends Model
         ];
     }
 
-    public function room_type() : HasOne{
-        return $this->hasOne(RoomType::class);
-    }
-
-    public function room() : BelongsTo {
+    public function room_type() : BelongsTo{
         return $this->belongsTo(RoomType::class);
     }
+
+
 }
