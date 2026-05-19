@@ -1,9 +1,9 @@
 @props(
-    ['title' => "Home"]
+['title' => "Home"]
 )
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" >
 
 <head>
     <meta charset="utf-8">
@@ -23,19 +23,14 @@
     @endif
 </head>
 
-<body>
-    <header class="flex justify-between align-middle items-center sticky top-0 z-50 bg-white shadow-md p-4 text-sm md:text-base text-center">
-        <h1>Company name</h1>
-        <nav role="navigation" class="flex items-center gap-4">
-            <a href="/">Home</a>
-            <a href="/about">About</a>
-            <a href="/contact">Contact</a>
-            <a href="/rooms">Rooms</a>
-            <a href="/reserve-slot" class="px-4 py-2 rounded-full bg-black text-white font-bold">Reserve a slot now!</a>
-        </nav>
-    </header>
+<body class="flex flex-col min-h-screen">
+    <x-partials.home-nav />
 
+    <main class="flex-1">
         {{$slot}}
+    </main>
+
+    <x-partials.footer />
 
 </body>
 
