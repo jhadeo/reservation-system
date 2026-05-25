@@ -10,7 +10,13 @@
                 <a href="/login">Login</a>
             @endguest
             @auth
-                <a href="/client/home">Account</a>
+                @if(Auth::user()->getAccountType()->value === 'admin')
+                    <a href="/admin/home">Account</a>
+                @elseif(Auth::user()->getAccountType()->value === 'staff')
+                    <a href="/staff/home">Account</a>
+                @else
+                    <a href="/client/home">Account</a>
+                @endif
             @endauth
             <a href="/reserve-slot" class="btn btn-neutral rounded-full">Reserve a slot now!</a>
         </nav>

@@ -29,10 +29,10 @@ class SessionsController extends Controller
             'password' => ['required']
         ]);
 
-
         if (Auth::attempt($validated)) {
+            $acc_type = Auth::user()->getAccountType()->value;
             $request->session()->regenerate();
-            return redirect('/client/home');
+            return redirect($acc_type . '/home');
         }
 
         return back()->withErrors([

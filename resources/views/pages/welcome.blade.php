@@ -1,6 +1,8 @@
 <x-layout>
-    <main>
-        <div style="background-image: url(https://images.pexels.com/photos/1146708/pexels-photo-1146708.jpeg); background-size: contain;"
+    <x-partials.home-nav></x-partials.home-nav>
+
+    <div>
+        <div style="background-image: url(https://images.pexels.com/photos/1146708/pexels-photo-1146708.jpeg); background-size: cover;"
             class="glass aspect-video max-w-full flex items-center justify-center shadow-2xl ">
             <h1 class="font-bold text-amber-50 sm:text-6xl text-4xl text-center">Tagline / Company Motto</h1>
         </div>
@@ -47,5 +49,6 @@
                 </blockquote>
             </div>
         </article>
-    </main>
+    </div>
+    <x-partials.footer />
 </x-layout>

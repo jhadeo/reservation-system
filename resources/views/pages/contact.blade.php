@@ -1,5 +1,6 @@
 <x-layout title="Contact">
-    <main class="my-6 p-4">
+    <x-partials.home-nav></x-partials.home-nav>
+    <div class="my-6 p-4">
         <h1 class="font-bold sm:text-6xl text-4xl flex justify-center m-10">Contact Us!</h1>
         <h2 class="font-bold flex justify-center mt-10">We want to hear from you, from feedback to inquiries!</h2>
         <h2 class="font-bold flex justify-center mt-2 mb-10">Say hi, or ask questions regarding our services</h2>
@@ -24,5 +25,7 @@
                 </div>
             </form>
         </div>
-    </main>
+    </div>
+    <x-partials.footer />
+
 </x-layout>

@@ -1,4 +1,5 @@
-<x-layout>
+<x-layout title="Login">
+     <x-partials.home-nav></x-partials.home-nav>
     <main class="my-6 p-4">
         <h1 class="font-bold sm:text-6xl text-4xl flex justify-center m-10">Login</h1>
         <div class="flex justify-center-safe">

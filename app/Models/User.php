@@ -14,7 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['first_name', 'last_name', 'phone', 'email', 'password', 'account_type'])]
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['password', 'remember_token', 'account_type'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -42,5 +42,10 @@ class User extends Authenticatable
     public function getFullNameAttribute(): string
     {
         return trim("{$this->first_name} {$this->last_name}");
+    }
+
+    public function getAccountType(): AccountType
+    {
+        return $this->account_type ?? AccountType::Client;
     }
 }

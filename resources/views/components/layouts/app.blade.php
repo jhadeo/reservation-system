@@ -24,8 +24,11 @@
 </head>
 
 <body class="flex flex-col min-h-screen">
-    <body class="flex flex-col min-h-screen">
-        <x-partials.client.nav :name="auth()->user()->full_name" />
-        {{ $slot }}
-    </body>
+
+    <main class="flex-1">
+        {{$slot}}
+    </main>
+    
+</body>
+
 </html>

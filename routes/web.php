@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\Route;
 
 //routes that don't need any authentication/middleware
 Route::get('/', function () {
-    return view('welcome');
+    return view('pages.welcome');
 });
 
 Route::get('/about', function () {
-    return view('about');
+    return view('pages.about');
 });
 
 Route::get('/contact', [ContactController::class, 'create']);
@@ -26,7 +26,7 @@ Route::post('/contact', [ContactController::class, 'store']);
 Route::get('/rooms', function () {
     $rooms = Room::all();
     $room_types = RoomType::all();
-    return view('rooms', ['rooms' => $rooms, 'room_types' => $room_types]);
+    return view('pages.rooms', ['rooms' => $rooms, 'room_types' => $room_types]);
 }); //refactor to use controllers
 
 Route::get('/reserve-slot', function () {
@@ -61,5 +61,10 @@ Route::middleware('auth')->group(function () {
             return view('staff/home');
         });
     });
-});
 
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/home', function () {
+            return view('admin/home');
+        });
+    });
+});
