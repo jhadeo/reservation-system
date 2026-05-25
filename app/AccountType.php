@@ -4,7 +4,7 @@ namespace App;
 
 enum AccountType: string
 {
-    case Guest = "guest";
+    case Client = "client";
     case Admin = "admin";
     case Staff = "staff";
 }

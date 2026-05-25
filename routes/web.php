@@ -46,7 +46,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::delete('/logout', [SessionsController::class, 'destroy']);
 
-    Route::middleware('role:guest')->group(function () {
+    Route::middleware('role:client')->group(function () {
         Route::get('/client/home', function () {
             return view('client/home');
         });

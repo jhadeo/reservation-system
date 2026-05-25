@@ -32,7 +32,7 @@ class RegisteredGuestController extends Controller
             'password' => ['required','min:8']
         ]);
 
-        // $data+= ["account_type" => AccountType::Guest->value]; // testing
+        // $data+= ["account_type" => AccountType::Client->value]; // testing
 
         DB::transaction(function () use ($request) {
             User::create([
