@@ -8,6 +8,10 @@ use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
+
+
+//routes that don't need any authentication/middleware
 Route::get('/', function () {
     return view('welcome');
 });
@@ -30,15 +34,32 @@ Route::get('/reserve-slot', function () {
 });
 
 
-Route::get('/register', [RegisteredGuestController::class, 'create']);
-Route::post('/register',[RegisteredGuestController::class, 'store']);
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisteredGuestController::class, 'create']);
+    Route::post('/register', [RegisteredGuestController::class, 'store']);
 
-Route::get('/login', [SessionsController::class, 'create']);
-Route::post('/login', [SessionsController::class, 'store']);
-Route::delete('/logout', [SessionsController::class, 'destroy']);
-
-Route::get('/client', function () {
-    return view('client/welcome');
+    Route::get('/login', [SessionsController::class, 'create']);
+    Route::post('/login', [SessionsController::class, 'store']);
 });
 
+
+Route::middleware('auth')->group(function () {
+    Route::delete('/logout', [SessionsController::class, 'destroy']);
+
+    Route::middleware('role:guest')->group(function () {
+        Route::get('/client/home', function () {
+            return view('client/home');
+        });
+
+        Route::get('/client/reservations', function () {
+            return 'TODO: Make a reservations page which shows the statuses of all reservations by hotel guest';
+        });
+    });
+
+    Route::middleware('role:staff')->group(function () {
+        Route::get('/staff/home', function () {
+            return view('staff/home');
+        });
+    });
+});
 

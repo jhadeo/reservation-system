@@ -10,7 +10,7 @@
                 <a href="/login">Login</a>
             @endguest
             @auth
-                <a href="/account">Account</a>
+                <a href="/client/home">Account</a>
             @endauth
             <a href="/reserve-slot" class="btn btn-neutral rounded-full">Reserve a slot now!</a>
         </nav>

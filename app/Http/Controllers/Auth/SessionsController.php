@@ -32,7 +32,7 @@ class SessionsController extends Controller
 
         if (Auth::attempt($validated)) {
             $request->session()->regenerate();
-            return redirect('/client');
+            return redirect('/client/home');
         }
 
         return back()->withErrors([
