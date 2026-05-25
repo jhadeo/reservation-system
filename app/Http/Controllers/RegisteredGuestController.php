@@ -6,6 +6,7 @@ use App\AccountType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class RegisteredGuestController extends Controller
 {
@@ -23,7 +24,7 @@ class RegisteredGuestController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'first_name' => ['required'],
             'last_name' => ['required'],
             'email' => ['required', 'email','unique:users,email'],
@@ -33,8 +34,14 @@ class RegisteredGuestController extends Controller
 
         // $data+= ["account_type" => AccountType::Guest->value]; // testing
 
-        DB::transaction(function () use ($data) {
-            User::create($data);
+        DB::transaction(function () use ($request) {
+            User::create([
+                'email' => $request->email,
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'phone' => $request->phone,
+                'password' => Hash::make($request->password)
+            ]);
         });
 
         return redirect('/login')->with('success', 'Successfully created your account! You can now log in.');

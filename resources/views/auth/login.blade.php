@@ -2,10 +2,11 @@
     <main class="my-6 p-4">
         <h1 class="font-bold sm:text-6xl text-4xl flex justify-center m-10">Login</h1>
         <div class="flex justify-center-safe">
-            <form action="" method="">
+            <form action="/login" method="POST">
                 @csrf
                 <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-sm border p-4">
-                    <x-forms.success/>
+                    <x-forms.success />
+                    <x-forms.error name="email" />
 
                     <label class="label">Email</label>
                     <input type="email" name="email" class="input w-sm" placeholder="Email" />

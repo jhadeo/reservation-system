@@ -8,11 +8,15 @@
 
                     <label class="label">Name</label>
                     <div class="flex gap-2">
-                        <input class="input" name="first_name" placeholder="First Name" />
-                        <input class="input" name="last_name" placeholder="Last Name" />
+                        <div>
+                            <input class="input" name="first_name" placeholder="First Name" />
+                            <x-forms.error name="first_name" />
+                        </div>
+                        <div>
+                            <input class="input" name="last_name" placeholder="Last Name" />
+                            <x-forms.error name="last_name" />
+                        </div>
                     </div>
-                    <x-forms.error name="first_name" />
-                    <x-forms.error name="last_name" />
 
                     <label class="label">Email</label>
                     <input type="email" name="email" class="input w-sm" placeholder="ex: john@gmail.com" />

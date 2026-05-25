@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\SessionsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\RegisteredGuestController;
 use App\Models\Room;
@@ -28,12 +29,16 @@ Route::get('/reserve-slot', function () {
     return view('reservations/reserve-room');
 });
 
-Route::get('/login', function(){
-    return view('auth.login');
-});
-
 
 Route::get('/register', [RegisteredGuestController::class, 'create']);
 Route::post('/register',[RegisteredGuestController::class, 'store']);
+
+Route::get('/login', [SessionsController::class, 'create']);
+Route::post('/login', [SessionsController::class, 'store']);
+Route::delete('/logout', [SessionsController::class, 'destroy']);
+
+Route::get('/client', function () {
+    return view('client/welcome');
+});
 
 
