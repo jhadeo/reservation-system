@@ -50,10 +50,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/client/home', function () {
             return view('client/home');
         });
-
-        Route::get('/client/reservations', function () {
-            return 'TODO: Make a reservations page which shows the statuses of all reservations by hotel guest';
-        });
     });
 
     Route::middleware('role:staff')->group(function () {

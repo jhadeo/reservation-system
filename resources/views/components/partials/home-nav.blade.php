@@ -20,4 +20,5 @@
             @endauth
             <a href="/reserve-slot" class="btn btn-neutral rounded-full">Reserve a slot now!</a>
         </nav>
+        
     </header>
