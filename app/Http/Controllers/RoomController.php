@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\RoomType;
+use Illuminate\Support\Facades\Auth;
+use App\AccountType;
 use Illuminate\Http\Request;
 
 class RoomController extends Controller
@@ -12,7 +15,9 @@ class RoomController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.rooms.index', [
+            'rooms' => Room::with('roomType')->get(),
+        ]);
     }
 
     /**
@@ -20,7 +25,8 @@ class RoomController extends Controller
      */
     public function create()
     {
-        //
+        $types = RoomType::pluck('name', 'id');
+        return view('admin.rooms.create', compact('types'));
     }
 
     /**
@@ -28,7 +34,28 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if ((!Auth::check()) || (Auth::user()->account_type !== AccountType::Admin)) {
+            //silently return them home
+            return redirect()->route('/', 404);
+        }
+
+        $validated = $request->validate([
+            'id' => 'required|min:5|max:50|unique:rooms',
+            'name' => 'required|min:5|max:50',
+            'hourly_rate' => 'required|numeric|min:1',
+            'max_pax' => 'required|integer|min:1',
+            'room_type_id' => 'required|exists:room_types,id',
+            'photo' => 'nullable|image',
+            'description' => 'required|max:255'
+        ]);
+
+        Room::create([
+            ...$validated,
+            'is_available' => false,
+            'featured' => false
+        ]);
+
+        return redirect()->route('admin.rooms.index')->with('success', 'Room created successfully!');
     }
 
     /**

@@ -5,6 +5,7 @@
     <nav role="navigation" class="flex items-center gap-4">
         <a href="/admin/home">Home</a>
         <a href="/admin/rooms">Manage Rooms</a>
+        <a href="/admin/room-types">Manage Room Types</a>
         <a href="/admin/staff">Manage Staff</a>
         <form action="/logout" method="post">
             @csrf

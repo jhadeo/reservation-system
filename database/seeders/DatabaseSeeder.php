@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\AccountType;
 use App\Models\User;
 use Database\Seeders\RoomSeeder;
 use Database\Seeders\RoomTypeSeeder;
@@ -19,14 +20,27 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        User::create([
+            'first_name' => 'System',
+            'last_name' => 'Admin',
+            'phone' => '09170000001',
+            'email' => 'admin@example.com',
+            'password' => 'password',
+            'account_type' => AccountType::Admin,
         ]);
 
-        $this->call([
-            RoomTypeSeeder::class,
-            RoomSeeder::class,
+        User::create([
+            'first_name' => 'Reservation',
+            'last_name' => 'Staff',
+            'phone' => '09170000002',
+            'email' => 'staff@example.com',
+            'password' => 'password',
+            'account_type' => AccountType::Staff,
         ]);
+
+        // $this->call([
+        //     RoomTypeSeeder::class,
+        //     RoomSeeder::class,
+        // ]);
     }
 }

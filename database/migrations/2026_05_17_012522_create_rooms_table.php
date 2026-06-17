@@ -20,7 +20,7 @@ return new class extends Migration
         });
 
         Schema::create('rooms', function (Blueprint $table) {
-            $table->id();
+            $table->string('id')->primary();
             $table->string('name');
             $table->decimal('hourly_rate', 10, 2);
             $table->integer('max_pax');

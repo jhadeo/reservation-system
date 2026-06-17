@@ -3,8 +3,13 @@
 use App\Http\Controllers\Auth\SessionsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\RegisteredGuestController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomTypeController;
+use App\Models\Reservation;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\ReservationStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,21 +51,35 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::delete('/logout', [SessionsController::class, 'destroy']);
 
-    Route::middleware('role:client')->group(function () {
-        Route::get('/client/home', function () {
-            return view('client/home');
+    Route::middleware('role:client')->prefix('client')->group(function () {
+        Route::get('/home', function () {
+            $reservations = Reservation::where('user_id', auth()->id())->get();
+            return view('client/home', ['reservations' => $reservations]);
         });
     });
 
-    Route::middleware('role:staff')->group(function () {
-        Route::get('/staff/home', function () {
+    Route::middleware('role:staff')->prefix('staff')->group(function () {
+        Route::get('/home', function () {
             return view('staff/home');
         });
     });
 
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/admin/home', function () {
-            return view('admin/home');
+    Route::middleware('role:admin')->prefix('admin')->group(function () {
+
+        Route::get('/home', function () {
+            $reservations = Reservation::whereIn('status', [ReservationStatus::Pending, ReservationStatus::Reserved, ReservationStatus::Active])
+                ->with('user', 'room')
+                ->latest('check_in_datetime')
+                ->get();
+            return view('admin/home', ['reservations' => $reservations]);
         });
+
+
+        Route::get('/rooms', [RoomController::class, 'index'])->name('admin.rooms.index');
+        Route::get('/rooms/create', [RoomController::class, 'create'])->name('admin.rooms.create');
+        Route::post('/rooms/create', [RoomController::class, 'store'])->name('admin.rooms.store');
+        
+        Route::get('/room-types',[RoomTypeController::class, 'index'])->name('admin.room-types');
+        Route::post('/room-types/create',[RoomTypeController::class, 'store'])->name('admin.room-types.create');
     });
 });
