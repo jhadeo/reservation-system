@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('hourly_rate', 10, 2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

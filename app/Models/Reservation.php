@@ -8,10 +8,13 @@ use App\ReservationStatus;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable(['user_id', 'room_id', 'event_id', 'pax', 'total_amount', 'payment_status', 'status', 'payment_method', 'check_in_datetime', 'check_out_datetime'])]
 class Reservation extends Model
 {
+    use SoftDeletes;
+    
     protected function casts() : array {
         return[
             'payment_method' => PaymentMethod::class,

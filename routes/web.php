@@ -79,7 +79,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/rooms/create', [RoomController::class, 'create'])->name('admin.rooms.create');
         Route::post('/rooms/create', [RoomController::class, 'store'])->name('admin.rooms.store');
         
-        Route::get('/room-types',[RoomTypeController::class, 'index'])->name('admin.room-types');
-        Route::post('/room-types/create',[RoomTypeController::class, 'store'])->name('admin.room-types.create');
+        Route::get('/room-types', [RoomTypeController::class, 'index'])->name('admin.room-types');
+        Route::post('/room-types/create', [RoomTypeController::class, 'store'])->name('admin.room-types.create');
+
+        Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('admin.rooms.show');
+        Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('admin.rooms.edit');
+        Route::put('/rooms/{room}/edit', [RoomController::class, 'update'])->name('admin.rooms.update');
+        Route::delete('/rooms/{room}/delete', [RoomController::class, 'destroy'])->name('admin.rooms.destroy');
+
     });
 });

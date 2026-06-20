@@ -2,17 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\AccountType;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReservationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(){
+    public function index()
+    {
+        switch (Auth::user()->account_type) {
+            case AccountType::Admin:
+                // admin logic
+                break;
 
+            case AccountType::Staff:
+                // staff logic
+                break;
 
+            case AccountType::Client:
+                // client logic
+                break;
+        }
     }
 
     /**
@@ -26,10 +40,7 @@ class ReservationController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-       
-    }
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.

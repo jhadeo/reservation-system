@@ -7,6 +7,10 @@ use App\Models\RoomType;
 use Illuminate\Support\Facades\Auth;
 use App\AccountType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+
 
 class RoomController extends Controller
 {
@@ -34,25 +38,30 @@ class RoomController extends Controller
      */
     public function store(Request $request)
     {
-        if ((!Auth::check()) || (Auth::user()->account_type !== AccountType::Admin)) {
-            //silently return them home
-            return redirect()->route('/', 404);
-        }
 
         $validated = $request->validate([
-            'id' => 'required|min:5|max:50|unique:rooms',
-            'name' => 'required|min:5|max:50',
-            'hourly_rate' => 'required|numeric|min:1',
-            'max_pax' => 'required|integer|min:1',
+            'room_id' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('rooms', 'room_id')->whereNull('deleted_at'),
+            ],
+            'name'         => 'required|min:5|max:50',
+            'hourly_rate'  => 'required|numeric|min:1',
+            'max_pax'      => 'required|integer|min:1',
             'room_type_id' => 'required|exists:room_types,id',
-            'photo' => 'nullable|image',
-            'description' => 'required|max:255'
+            'photo'        => 'nullable|image',
+            'description'  => 'required|max:255',
         ]);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('images', 'public');
+        }
 
         Room::create([
             ...$validated,
             'is_available' => false,
-            'featured' => false
+            'featured'     => false,
         ]);
 
         return redirect()->route('admin.rooms.index')->with('success', 'Room created successfully!');
@@ -63,7 +72,8 @@ class RoomController extends Controller
      */
     public function show(Room $room)
     {
-        //
+        $types = RoomType::pluck('name', 'id')->get($room->room_type_id);
+        return view('admin.rooms.show', compact('room', 'types'));
     }
 
     /**
@@ -71,7 +81,8 @@ class RoomController extends Controller
      */
     public function edit(Room $room)
     {
-        //
+        $types = RoomType::pluck('name', 'id');
+        return view('admin.rooms.edit', compact('room', 'types'));
     }
 
     /**
@@ -79,7 +90,43 @@ class RoomController extends Controller
      */
     public function update(Request $request, Room $room)
     {
-        //
+
+        $validated = $request->validate([
+            'room_id' => [
+                'required',
+                'min:5',
+                'max:50',
+                Rule::unique('rooms', 'room_id')->ignore($room->room_id),
+            ],
+            'name'         => 'required|min:5|max:50',
+            'hourly_rate'  => 'required|numeric|min:1',
+            'max_pax'      => 'required|integer|min:1',
+            'room_type_id' => 'required|exists:room_types,id',
+            'photo'        => 'nullable|image',
+            'description'  => 'required|max:255',
+        ]);
+
+        if ($request->hasFile('photo')) {
+            Storage::delete('public/' . $room->photo);
+            $validated['photo'] = $request->file('photo')->store('images', 'public');
+        } else {
+            unset($validated['photo']);
+        }
+
+        $validated['hourly_rate'] = (float) $validated['hourly_rate'];
+        $validated['max_pax'] = (int) $validated['max_pax'];
+        $validated['room_type_id'] = (int) $validated['room_type_id'];
+        $validated['is_available'] = $request->has('is_available');
+        $validated['featured'] = $request->has('featured');
+
+        $room->fill($validated);
+
+        if (!$room->isDirty()) {
+            return redirect()->route('admin.rooms.index')->with('info', 'No changes were made.');
+        }
+
+        $room->save();
+        return redirect()->route('admin.rooms.index')->with('success', 'Room updated successfully!');
     }
 
     /**
@@ -87,6 +134,8 @@ class RoomController extends Controller
      */
     public function destroy(Room $room)
     {
-        //
+        Log::info('Room deleted: ' . $room->id . ' by ' . Auth::user()->fullName);
+        $room->delete();
+        return redirect()->route('admin.rooms.index')->with('success', 'Room deleted successfully!');
     }
 }

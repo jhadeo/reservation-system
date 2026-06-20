@@ -26,7 +26,9 @@ return new class extends Migration
             $table->string('status')->default(ReservationStatus::Pending->value);
             $table->dateTime('check_in_datetime');
             $table->dateTime('check_out_datetime');
+            $table->string('staff_notes')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

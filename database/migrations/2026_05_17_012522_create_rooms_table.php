@@ -17,18 +17,22 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->text('description');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('rooms', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
+            $table->string('room_id');
             $table->string('name');
             $table->decimal('hourly_rate', 10, 2);
             $table->integer('max_pax');
-            $table->boolean('is_available');
+            $table->boolean('is_available')->default(false);
+            $table->boolean('featured')->default(false);
             $table->foreignId('room_type_id')->constrained('room_types')->restrictOnDelete();
             $table->text('description')->nullable();
             $table->text('photo')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
