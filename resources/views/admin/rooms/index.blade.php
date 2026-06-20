@@ -101,9 +101,8 @@
 
     <script>
         function openDeleteModal(button) {
-            console.log(button.dataset)
             document.getElementById('delete-form').action = button.dataset.action;
-            document.getElementById('room-name').textContent =button.dataset.roomName;
+            document.getElementById('room-name').textContent = button.dataset.roomName;
             document.getElementById('delete_modal').showModal();
         }
     </script>

@@ -14,7 +14,7 @@
                 <div class="grid grid-cols-1 gap-5 md:grid-cols-2 md:[direction:ltr]">
                     <div class="flex w-full flex-col">
                         <label for="room_id">Room ID</label>
-                        <input type="text" class="input w-full" name="room_id" value="{{ old('id') }}" placeholder="ex: REG-302" />
+                        <input type="text" class="input w-full" name="room_id" value="{{ old('room_id') }}" placeholder="ex: REG-302" />
                         <p class="label">Must be unique. This includes rooms that have been deleted.</p>
                         <x-forms.error name="room_id" />
                     </div>

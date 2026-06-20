@@ -38,7 +38,16 @@
                                         default => 'ghost'
                                     } }}">
                             {{ ucfirst($reservation->status->value) }}
+                    <td>
+                        <span class="badge badge-{{ match($reservation->payment_status?->value) {
+                                        'paid' => 'success',
+                                        'pending' => 'warning',
+                                        'failed' => 'error',
+                                        default => 'ghost'
+                                    } }}">
                             {{ ucfirst($reservation->payment_status?->value ?? 'unknown') }}
+                        </span>
+                    </td>
                     </td>
                     <td>
                         <span class="badge badge-{{ match($reservation->payment_status?->value) {
@@ -47,7 +56,7 @@
                                         'failed' => 'error',
                                         default => 'ghost'
                                     } }}">
-                            {{ ucfirst($reservation->payment_status->value ?? 'unknown') }}
+                            {{ ucfirst($reservation->payment_status?->value ?? 'unknown') }}
                         </span>
                     </td>
                 </tr>

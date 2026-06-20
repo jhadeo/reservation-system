@@ -1,9 +1,9 @@
-<x-layout title="{{ $room->id }}">
+<x-layout title="{{ $room->room_id }}">
     <x-partials.admin.nav :name="auth()->user()->full_name" />
 
     <div class="p-6">
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold">{{ $room->id }} - Details</h2>
+            <h2 class="text-2xl font-bold">{{ $room->room_id }} - Details</h2>
         </div>
         <div class="flex mb-8">
             <a href="{{url()->previous()}}" class="font-bold"><- Go Back</a>
@@ -19,9 +19,8 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <p class="label-text">Room ID</p>
-                            <p class="border p-2 rounded">{{ $room->id }}</p>
+                            <p class="border p-2 rounded">{{ $room->room_id }}</p>
                         </div>
-
                         <div>
                             <p class="label-text">Room Name</p>
                             <p class="border p-2 rounded">{{ $room->name }}</p>
@@ -40,9 +39,8 @@
 
                     <div class="mt-4">
                         <p class="label-text">Room Type</p>
-                        <p class="border p-2 rounded">{{ $types }}</p>
-                    </div>
-                    <div class="mt-4">
+                        <p class="border p-2 rounded">{{ $room->roomType?->name ?? 'N/A' }}</p>
+                    </div>                    <div class="mt-4">
                         <p class="label-text">Description</p>
                         <p class="border rounded p-2 w-full">{{ $room->description }}</p>
                     </div>
@@ -65,7 +63,7 @@
                 <div class="md:w-1/2 pl-4 w-full mt-6 md:mt-0">
                     <div class="border rounded p-2 bg-gray-50 flex items-center justify-center h-full">
                         @if ($room->photo)
-                        <img src="{{ Storage::url($room->photo) }}" alt="Room of {{ $room->id }}" class="w-full h-full object-cover rounded id" id="photo-preview">
+                        <img src="{{ Storage::url($room->photo) }}" alt="Room of {{ $room->room_id }}" class="w-full h-full object-cover rounded id" id="photo-preview">
                         @else
                         <div class="text-center text-sm text-gray-500">
 

@@ -46,7 +46,7 @@ class RoomController extends Controller
                 'max:50',
                 Rule::unique('rooms', 'room_id')->whereNull('deleted_at'),
             ],
-            'name'         => 'required|min:5|max:50',
+            'name' => 'required|min:5|max:50',
             'hourly_rate'  => 'required|numeric|min:1',
             'max_pax'      => 'required|integer|min:1',
             'room_type_id' => 'required|exists:room_types,id',
@@ -72,8 +72,7 @@ class RoomController extends Controller
      */
     public function show(Room $room)
     {
-        $types = RoomType::pluck('name', 'id')->get($room->room_type_id);
-        return view('admin.rooms.show', compact('room', 'types'));
+        return view('admin.rooms.show', compact('room'));
     }
 
     /**
@@ -96,7 +95,7 @@ class RoomController extends Controller
                 'required',
                 'min:5',
                 'max:50',
-                Rule::unique('rooms', 'room_id')->ignore($room->room_id),
+                Rule::unique('rooms', 'room_id')->ignore($room->id),
             ],
             'name'         => 'required|min:5|max:50',
             'hourly_rate'  => 'required|numeric|min:1',
@@ -107,7 +106,9 @@ class RoomController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            Storage::delete('public/' . $room->photo);
+            if ($room->photo) {
+                Storage::delete('public/' . $room->photo);
+            }
             $validated['photo'] = $request->file('photo')->store('images', 'public');
         } else {
             unset($validated['photo']);

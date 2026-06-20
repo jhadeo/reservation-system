@@ -9,6 +9,7 @@
         </div>
 
         <x-forms.alert-success />
+        <x-forms.alert-info />
 
         @if($roomTypes->isEmpty())
         <div class="flex items-center justify-center min-h-96">
@@ -28,17 +29,33 @@
                         <th>Type Name</th>
                         <th>Description</th>
                         <th>Rooms</th>
-                        <th>Actions</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($roomTypes as $type)
                     <tr>
                         <td class="font-semibold">{{ $type->name }}</td>
-                        <td>{{ Str::limit($type->description, 50) }}</td>
+                        <td class="tooltip tooltip-right" data-tip="{{$type->description}}">
+                            <p>{{ Str::limit($type->description, 50) }}</p>
+                        </td>
+
                         <td><span class="badge badge-info">{{ $type->rooms_count }}</span></td>
-                        <td>
-                            <a href="#" class="btn btn-ghost btn-xs">Edit</a>
+                        <td class="flex gap-2 justify-center">
+                            <a href="#" class="btn btn-neutral btn-xs"
+                                data-action="{{ route('admin.room-types.update', $type) }}"
+                                data-type-name="{{ $type->name }}"
+                                data-type-description="{{ $type->description }}"
+                                onclick="openEditModal(this)">
+                                Edit
+                            </a>
+                            <a href="#"
+                                class="btn btn-error btn-xs"
+                                data-action="{{ route('admin.room-types.destroy', $type) }}"
+                                data-type-name="{{ $type->name }}"
+                                onclick="openDeleteModal(this)">
+                                Delete
+                            </a>
                         </td>
                     </tr>
                     @endforeach
@@ -71,7 +88,74 @@
                     </fieldset>
                 </form>
             </div>
-
         </div>
     </dialog>
+
+    <dialog id="edit_modal" class="modal">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="text-lg font-bold">Edit <span id="room-name"></span></h3>
+            <div class="my-4 w-full">
+                <form method="post" class="w-full" id="edit-form">
+                    @csrf
+                    @method('put')
+                    <fieldset class="fieldset p-4 w-full">
+
+                        <label class="label">Name<span class="text-red-500">*</span></label>
+                        <input type="text" name="name" id="edit-name" class="input w-full" placeholder="Name" value="{{ old('name') }}" />
+                        <x-forms.error name="name" />
+
+                        <label class="label">Description<span class="text-red-500">*</span></label>
+                        <input type="text" name="description" id="edit-description" class="input w-full" placeholder="Description" value="{{ old('description') }}" />
+                        <x-forms.error name="description" />
+
+                        <button type="submit" class="btn btn-primary mt-4">Save changes</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog id="delete_modal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Delete Room Type</h3>
+
+            <p class="py-4">
+                Are you sure you want to delete
+                <span id="type-name" class="font-semibold"></span>?
+            </p>
+
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn">Cancel</button>
+                </form>
+
+                <form id="delete-form" method="POST">
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit" class="btn btn-error">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        function openEditModal(button) {
+            document.getElementById('edit-form').action = button.dataset.action;
+            document.getElementById('edit-name').value = button.dataset.typeName;
+            document.getElementById('edit-description').value = button.dataset.typeDescription;
+            document.getElementById('edit_modal').showModal();
+        }
+
+        function openDeleteModal(button) {
+            document.getElementById('delete-form').action = button.dataset.action;
+            document.getElementById('type-name').textContent = button.dataset.typeName;
+            document.getElementById('delete_modal').showModal();
+        }
+    </script>
 </x-layout>

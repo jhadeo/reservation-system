@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
-use App\AccountType;
+use Illuminate\Support\Facades\Log;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 
@@ -31,19 +31,14 @@ class RoomTypeController extends Controller
      */
     public function store(Request $request)
     {
-        if ((!Auth::check()) || (Auth::user()->account_type !== AccountType::Admin)) {
-            //silently return them home
-            return redirect()->route('/', 404);
-        }
-
         $validated = $request->validate([
             'name' => 'required|string|min:5|max:50',
             'description' => 'required|string|min:5|max:255',
         ]);
 
         RoomType::create($validated);
-        
-        return redirect()->route('admin.room-types')->with('success', 'Room type successfully created');
+
+        return redirect()->route('admin.room-types')->with('success', 'Room type successfully created.');
     }
 
     /**
@@ -67,14 +62,30 @@ class RoomTypeController extends Controller
      */
     public function update(Request $request, RoomType $roomType)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|min:5|max:50',
+            'description' => 'required|string|min:5|max:255',
+        ]);
+
+        $roomType->fill($validated);
+
+        if (!$roomType->isDirty()) {
+            return redirect()->route('admin.room-types')->with('info', 'No changes were made.');
+        }
+
+        $roomType->save();
+        return redirect()->route('admin.room-types')->with('success', 'Details changed successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RoomType $roomType)
-    {
-        //
+    public function destroy(RoomType $roomType) {
+        if($roomType->rooms()->exists()){
+            return redirect()->route('admin.room-types')->with('info', 'Cannot delete a room type that still has rooms assigned.');
+        }
+        $roomType->delete();
+        Log::info('Room type deleted: ' . $roomType->name . ' by ' . Auth::user()->fullName);
+        return redirect()->route('admin.room-types')->with('success', 'Successfully deleted room type.');
     }
 }

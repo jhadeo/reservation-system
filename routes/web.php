@@ -70,7 +70,7 @@ Route::middleware('auth')->group(function () {
             $reservations = Reservation::whereIn('status', [ReservationStatus::Pending, ReservationStatus::Reserved, ReservationStatus::Active])
                 ->with('user', 'room')
                 ->latest('check_in_datetime')
-                ->get();
+                ->get(); // wtf is this?
             return view('admin/home', ['reservations' => $reservations]);
         });
 
@@ -81,6 +81,8 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/room-types', [RoomTypeController::class, 'index'])->name('admin.room-types');
         Route::post('/room-types/create', [RoomTypeController::class, 'store'])->name('admin.room-types.create');
+        Route::put('/room-types/{roomType}/edit', [RoomTypeController::class, 'update'])->name('admin.room-types.update');
+        Route::delete('/room-types/{roomType}/delete', [RoomTypeController::class, 'destroy'])->name('admin.room-types.destroy');
 
         Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('admin.rooms.show');
         Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('admin.rooms.edit');

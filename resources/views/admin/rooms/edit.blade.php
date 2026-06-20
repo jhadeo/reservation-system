@@ -73,7 +73,7 @@
                 <div class="md:w-1/2 pl-4 w-full mt-6 md:mt-0">
                     <div class="border rounded p-2 bg-gray-50 flex items-center justify-center h-full">
                         @if ($room->photo)
-                        <img src="{{ Storage::url($room->photo) }}" alt="Room of {{ $room->id }}" class="w-full h-full object-cover rounded id" id="photo-preview">
+                        <img src="{{ Storage::url($room->photo) }}" alt="Room of {{ $room->room_id }}" class="w-full h-full object-cover rounded id" id="photo-preview">
                         @else
                         <div class="text-center text-sm text-gray-500">
 
