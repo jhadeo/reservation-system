@@ -24,9 +24,8 @@ class RoomTypeController extends Controller
      */
     public function search(Request $request)
     {
-        $search =    $request->validate([
-            'search' => 'required|string|min:1|max:100',
-        ]);
+        $search = $request->input('search');
+
         $results = RoomType::where('name', 'LIKE', "%{$search}%")->get();
 
         return response()->json($results);
