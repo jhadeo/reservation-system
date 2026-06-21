@@ -4,8 +4,23 @@
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-2xl font-bold">Room Types</h2>
             <div class="flex gap-2">
+                <label class="input">
+                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <g
+                            stroke-linejoin="round"
+                            stroke-linecap="round"
+                            stroke-width="2.5"
+                            fill="none"
+                            stroke="currentColor">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </g>
+                    </svg>
+                    <input type="search" id="search" placeholder="Search" />
+                </label>
                 <button class="btn btn-primary" onclick="create_modal.showModal()">+ New Room Type</button>
             </div>
+
         </div>
 
         <x-forms.alert-success />
@@ -32,28 +47,28 @@
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="t-body">
                     @foreach($roomTypes as $type)
                     <tr>
                         <td class="font-semibold">{{ $type->name }}</td>
-                        <td class="tooltip tooltip-right" data-tip="{{$type->description}}">
-                            <p>{{ Str::limit($type->description, 50) }}</p>
+                        <td class="font-semibold">
+                            <div class="max-w-xs truncate" title="{{ $type->description }}">
+                                {{ $type->description }}
+                            </div>
                         </td>
 
                         <td><span class="badge badge-info">{{ $type->rooms_count }}</span></td>
                         <td class="flex gap-2 justify-center">
-                            <a href="#" class="btn btn-neutral btn-xs"
+                            <a href="#" class="btn btn-neutral btn-xs edit-btn"
                                 data-action="{{ route('admin.room-types.update', $type) }}"
                                 data-type-name="{{ $type->name }}"
-                                data-type-description="{{ $type->description }}"
-                                onclick="openEditModal(this)">
+                                data-type-description="{{ $type->description }}">
                                 Edit
                             </a>
                             <a href="#"
-                                class="btn btn-error btn-xs"
+                                class="btn btn-error btn-xs delete-btn"
                                 data-action="{{ route('admin.room-types.destroy', $type) }}"
-                                data-type-name="{{ $type->name }}"
-                                onclick="openDeleteModal(this)">
+                                data-type-name="{{ $type->name }}">
                                 Delete
                             </a>
                         </td>
@@ -145,6 +160,34 @@
     </dialog>
 
     <script>
+        function debounce(fn, delay) {
+            let timer;
+
+            return function(...args) {
+                clearTimeout(timer);
+
+                timer = setTimeout(() => {
+                    fn(...args);
+                }, delay);
+            }
+        }
+
+        async function search(text) {
+            const response = await fetch(
+                `{{route('admin.room-types.search')}}?search=${encodeURIComponent(text)}`, {
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                }
+            );
+            const results = await response.json();
+            console.log(results);
+        }
+
+        function updateTable(results){
+            //TODO: update table using results from filters and/or search
+        }
+
         function openEditModal(button) {
             document.getElementById('edit-form').action = button.dataset.action;
             document.getElementById('edit-name').value = button.dataset.typeName;
@@ -157,5 +200,24 @@
             document.getElementById('type-name').textContent = button.dataset.typeName;
             document.getElementById('delete_modal').showModal();
         }
+
+        const actions = document.querySelector('.t-body');
+        actions.addEventListener('click', (event) => {
+            const removeButton = event.target.closest('.delete-btn');
+            if (removeButton) {
+                openDeleteModal(removeButton);
+            }
+
+            const editButton = event.target.closest('.edit-btn');
+            if (editButton) {
+                openEditModal(editButton);
+            }
+        });
+
+        const debouncedSearch = debounce(search, 500);
+
+        document.getElementById('search').addEventListener('input', (event) => {
+            debouncedSearch(event.target.value)
+        });
     </script>
 </x-layout>

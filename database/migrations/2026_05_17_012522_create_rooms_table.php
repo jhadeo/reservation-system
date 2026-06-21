@@ -14,7 +14,7 @@ return new class extends Migration
 
         Schema::create('room_types', function (Blueprint $table){
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->text('description');
             $table->timestamps();
             $table->softDeletes();
@@ -22,7 +22,7 @@ return new class extends Migration
 
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->string('room_id')->unique();
+            $table->string('room_id');
             $table->string('name');
             $table->decimal('hourly_rate', 10, 2);
             $table->integer('max_pax');

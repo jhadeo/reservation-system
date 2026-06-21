@@ -81,6 +81,7 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/room-types', [RoomTypeController::class, 'index'])->name('admin.room-types');
         Route::post('/room-types/create', [RoomTypeController::class, 'store'])->name('admin.room-types.create');
+        Route::get('/room-types/search', [RoomTypeController::class, 'search'])->name('admin.room-types.search');
         Route::put('/room-types/{roomType}/edit', [RoomTypeController::class, 'update'])->name('admin.room-types.update');
         Route::delete('/room-types/{roomType}/delete', [RoomTypeController::class, 'destroy'])->name('admin.room-types.destroy');
 

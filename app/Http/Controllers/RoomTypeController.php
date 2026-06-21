@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RoomTypeController extends Controller
 {
@@ -19,11 +20,16 @@ class RoomTypeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Search for resource/s.
      */
-    public function create()
+    public function search(Request $request)
     {
-        //
+        $search =    $request->validate([
+            'search' => 'required|string|min:1|max:100',
+        ]);
+        $results = RoomType::where('name', 'LIKE', "%{$search}%")->get();
+
+        return response()->json($results);
     }
 
     /**
@@ -32,7 +38,12 @@ class RoomTypeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|min:5|max:50',
+            'name' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('room_types', 'name')->whereNull('deleted_at'),
+            ],
             'description' => 'required|string|min:5|max:255',
         ]);
 
@@ -80,8 +91,9 @@ class RoomTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(RoomType $roomType) {
-        if($roomType->rooms()->exists()){
+    public function destroy(RoomType $roomType)
+    {
+        if ($roomType->rooms()->exists()) {
             return redirect()->route('admin.room-types')->with('info', 'Cannot delete a room type that still has rooms assigned.');
         }
         $roomType->delete();
