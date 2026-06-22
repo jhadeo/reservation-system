@@ -16,7 +16,7 @@
                             <path d="m21 21-4.3-4.3"></path>
                         </g>
                     </svg>
-                    <input type="search" id="search" placeholder="Search" />
+                    <input type="search" id="search" placeholder="Search" data-url="{{ route('admin.room-types.search')}}"/>
                 </label>
                 <button class="btn btn-primary" onclick="create_modal.showModal()">+ New Room Type</button>
             </div>
@@ -159,128 +159,5 @@
         </div>
     </dialog>
 
-    <script>
-        function debounce(fn, delay) {
-            let timer;
-
-            return function(...args) {
-                clearTimeout(timer);
-
-                timer = setTimeout(() => {
-                    fn(...args);
-                }, delay);
-            }
-        }
-
-        async function search(text) {
-            const response = await fetch(
-                `{{route('admin.room-types.search')}}?search=${encodeURIComponent(text)}`, {
-                    headers: {
-                        "Accept": "application/json"
-                    }
-                }
-            );
-            const results = await response.json();
-            console.log(results);
-            updateTable(results);
-        }
-
-        function updateTable(results) {
-            const tbody = document.querySelector('.t-body');
-
-            if (results.length === 0) {
-                tbody.innerHTML = `
-            <tr>
-                <td colspan="4" class="text-center py-4">
-                    No results found
-                </td>
-            </tr>
-        `;
-                return;
-            }
-
-            function escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            tbody.innerHTML = results.map(type => {
-                const safeName = escapeHtml(type.name);
-                const safeDescription = escapeHtml(type.description);
-                return `
-            <tr>
-                <td class="font-semibold">${safeName}</td>
-
-                <td class="font-semibold">
-                    <div class="max-w-xs truncate" title="${safeDescription}">
-                        ${safeDescription}
-                    </div>
-                </td>
-
-                <td>
-                    <span class="badge badge-info">
-                        ${type.rooms_count ?? 0}
-                    </span>
-                </td>
-
-                <td class="flex gap-2 justify-center">
-                    <a href="#"
-                        class="btn btn-neutral btn-xs edit-btn"
-                        data-action="/admin/room-types/${type.id}"
-                        data-type-name="${safeName}"
-                        data-type-description="${safeDescription}">
-                        Edit
-                    </a>
-
-                    <a href="#"
-                        class="btn btn-error btn-xs delete-btn"
-                        data-action="/admin/room-types/${type.id}"
-                        data-type-name="${safeName}">
-                        Delete
-                    </a>
-                </td>
-            </tr>
-        `;
-            }).join('');
-        }
-
-        function openEditModal(button) {
-            document.getElementById('edit-form').action = button.dataset.action;
-            document.getElementById('edit-name').value = button.dataset.typeName;
-            document.getElementById('edit-description').value = button.dataset.typeDescription;
-            document.getElementById('edit_modal').showModal();
-        }
-
-        function openDeleteModal(button) {
-            document.getElementById('delete-form').action = button.dataset.action;
-            document.getElementById('type-name').textContent = button.dataset.typeName;
-            document.getElementById('delete_modal').showModal();
-        }
-
-        const actions = document.querySelector('.t-body');
-        actions.addEventListener('click', (event) => {
-            const removeButton = event.target.closest('.delete-btn');
-            if (removeButton) {
-                openDeleteModal(removeButton);
-            }
-
-            const editButton = event.target.closest('.edit-btn');
-            if (editButton) {
-                openEditModal(editButton);
-            }
-        });
-
-        const debouncedSearch = debounce(search, 500);
-
-        document.getElementById('search').addEventListener('input', (event) => {
-            const value = event.target.value;
-            const trimmed = value.trim();
-            if (trimmed === '') {
-                location.reload(); // simplest reset
-                return;
-            }
-            debouncedSearch(trimmed);
-        });
-    </script>
+    @vite(['resources/js/room-types/index.js'])
 </x-layout>

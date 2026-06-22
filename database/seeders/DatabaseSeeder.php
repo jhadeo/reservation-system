@@ -37,6 +37,14 @@ class DatabaseSeeder extends Seeder
             'password' => 'password',
             'account_type' => AccountType::Staff,
         ]);
+        User::create([
+            'first_name' => 'Hotel',
+            'last_name' => 'Client',
+            'phone' => '09170000003',
+            'email' => 'client@example.com',
+            'password' => 'password',
+            'account_type' => AccountType::Client,
+        ]);
 
         // $this->call([
         //     RoomTypeSeeder::class,

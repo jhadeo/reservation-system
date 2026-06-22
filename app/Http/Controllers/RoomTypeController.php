@@ -24,6 +24,9 @@ class RoomTypeController extends Controller
      */
     public function search(Request $request)
     {
+        if (!$request->expectsJson()) {
+            return redirect()->route('admin.room-types');
+        }
         $search = $request->input('search');
 
         $results = RoomType::where('name', 'LIKE', "%{$search}%")->get();
