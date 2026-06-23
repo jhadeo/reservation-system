@@ -2,11 +2,27 @@
     <x-partials.admin.nav :name="auth()->user()->full_name" />
 
     <div class="p-6">
+
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-2xl font-bold">Rooms</h2>
             <div class="flex gap-2">
-                <a href="/admin/rooms/create" class="btn btn-primary btn-sm">+ New Room</a>
+                <label class="input">
+                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <g
+                            stroke-linejoin="round"
+                            stroke-linecap="round"
+                            stroke-width="2.5"
+                            fill="none"
+                            stroke="currentColor">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </g>
+                    </svg>
+                    <input type="search" id="search" placeholder="Search" data-url="{{ route('admin.rooms.search')}}" />
+                </label>
+                <a href="/admin/rooms/create" class="btn btn-primary">+ New Room</a>
             </div>
+
         </div>
 
         <x-forms.alert-success />
@@ -25,52 +41,55 @@
         </div>
         @else
         <!-- Rooms grouped by Type -->
-        @foreach($rooms->groupBy('room_type_id') as $typeId => $typeRooms)
-        <div class="mb-8">
-            <h3 class="text-xl font-semibold mb-4">{{ $typeRooms->first()->roomType?->name ?? 'Untyped' }} ({{ $typeRooms->count() }})</h3>
-            <div class="overflow-x-auto">
-                <table class="table table-zebra">
-                    <thead>
-                        <tr>
-                            <th>Room ID</th>
-                            <th>Room Name</th>
-                            <th>Rate</th>
-                            <th>Max Capacity</th>
-                            <th>Available</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($typeRooms as $room)
-                        <tr>
-                            <td class="font-semibold">{{ $room->room_id }}</td>
-                            <td class="font-semibold">{{ $room->name }}</td>
-                            <td>₱{{ number_format($room->hourly_rate, 2) }}/hr</td>
-                            <td>{{ $room->max_pax }} people</td>
-                            <td>
-                                <span class="badge {{ $room->is_available ? 'badge-success' : 'badge-error' }}">
-                                    {{ $room->is_available ? 'Available' : 'Unavailable' }}
-                                </span>
-                            </td>
-                            <td class="flex gap-2 justify-center">
-                                <a href="{{ route('admin.rooms.show', $room) }}" class="btn btn-primary btn-xs">Show</a>
-                                <a href="{{ route('admin.rooms.edit', $room) }}" class="btn btn-neutral btn-xs">Edit</a>
-                                <a href="#"
-                                    class="btn btn-error btn-xs"
-                                    data-action="{{ route('admin.rooms.destroy', $room) }}"
-                                    data-room-name="{{ $room->name }}"
-                                    onclick="openDeleteModal(this)">
-                                    Delete
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        <div id="rooms-container">
+            @foreach($rooms->groupBy('room_type_id') as $typeId => $typeRooms)
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-4">{{ $typeRooms->first()->roomType?->name ?? 'Untyped' }} ({{ $typeRooms->count() }})</h3>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>Room ID</th>
+                                <th>Room Name</th>
+                                <th>Rate</th>
+                                <th>Max Capacity</th>
+                                <th>Available</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($typeRooms as $room)
+                            <tr>
+                                <td class="font-semibold">{{ $room->room_id }}</td>
+                                <td class="font-semibold">{{ $room->name }}</td>
+                                <td>₱{{ number_format($room->hourly_rate, 2) }}/hr</td>
+                                <td>{{ $room->max_pax }} people</td>
+                                <td>
+                                    <span class="badge {{ $room->is_available ? 'badge-success' : 'badge-error' }}">
+                                        {{ $room->is_available ? 'Available' : 'Unavailable' }}
+                                    </span>
+                                </td>
+                                <td class="flex gap-2 justify-center">
+                                    <a href="{{ route('admin.rooms.show', $room) }}" class="btn btn-primary btn-xs">Show</a>
+                                    <a href="{{ route('admin.rooms.edit', $room) }}" class="btn btn-neutral btn-xs">Edit</a>
+                                    <button
+                                        class="btn btn-error btn-xs"
+                                        data-action="{{ route('admin.rooms.destroy', $room) }}"
+                                        data-room-name="{{ $room->name }}"
+                                        onclick="openDeleteModal(this)">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
+            @endforeach
+            @endif
         </div>
-        @endforeach
-        @endif
+
     </div>
 
     <dialog id="delete_modal" class="modal">
@@ -81,6 +100,7 @@
                 Are you sure you want to delete
                 <span id="room-name" class="font-semibold"></span>?
             </p>
+
 
             <div class="modal-action">
                 <form method="dialog">
@@ -98,12 +118,5 @@
             </div>
         </div>
     </dialog>
-
-    <script>
-        function openDeleteModal(button) {
-            document.getElementById('delete-form').action = button.dataset.action;
-            document.getElementById('room-name').textContent = button.dataset.roomName;
-            document.getElementById('delete_modal').showModal();
-        }
-    </script>
+    @vite(['resources/js/rooms/index.js'])
 </x-layout>

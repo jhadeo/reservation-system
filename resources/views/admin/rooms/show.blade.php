@@ -6,12 +6,10 @@
             <h2 class="text-2xl font-bold">{{ $room->room_id }} - Details</h2>
         </div>
         <div class="flex mb-8">
-            <a href="{{url()->previous()}}" class="font-bold"><- Go Back</a>
+            <a href="{{url()->previous()}}" class="font-bold">← Go Back</a>
         </div>
 
         <x-forms.alert-success />
-
-
 
         <div class="max-w-full">
             <div class="md:flex md:items-stretch md:gap-8">
@@ -61,9 +59,9 @@
                 </div>
 
                 <div class="md:w-1/2 pl-4 w-full mt-6 md:mt-0">
-                    <div class="border rounded p-2 bg-gray-50 flex items-center justify-center h-full">
+                    <div class="border rounded p-2 bg-gray-50 flex items-center justify-center h-full max-h-100">
                         @if ($room->photo)
-                        <img src="{{ Storage::url($room->photo) }}" alt="Room of {{ $room->room_id }}" class="w-full h-full object-cover rounded id" id="photo-preview">
+                        <img src="{{ Storage::url($room->photo) }}" alt="Room of {{ $room->room_id }}" class="w-full h-full max-h-100 object-scale-down rounded id" id="photo-preview">
                         @else
                         <div class="text-center text-sm text-gray-500">
 

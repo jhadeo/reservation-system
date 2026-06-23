@@ -1,9 +1,12 @@
-<x-layout title="Edit {{ $room->id }}">
+<x-layout title="Edit {{ $room->room_id }}">
     <x-partials.admin.nav :name="auth()->user()->full_name" />
 
     <div class="p-6">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-bold">Edit Room</h2>
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold uppercase">Edit Room</h2>
+        </div>
+        <div class="flex mb-8">
+            <a href="{{url()->previous()}}" class="font-bold">← Go Back</a>
         </div>
 
         <x-forms.alert-success />
@@ -73,7 +76,7 @@
                 <div class="md:w-1/2 pl-4 w-full mt-6 md:mt-0">
                     <div class="border rounded p-2 bg-gray-50 flex items-center justify-center h-full">
                         @if ($room->photo)
-                        <img src="{{ Storage::url($room->photo) }}" alt="Room of {{ $room->room_id }}" class="w-full h-full object-cover rounded id" id="photo-preview">
+                        <img src="{{ Storage::url($room->photo) }}" alt="Room of {{ $room->room_id }}" class="w-full max-h-100 object-scale-down rounded id" id="photo-preview">
                         @else
                         <div class="text-center text-sm text-gray-500">
 

@@ -4,7 +4,7 @@
         <div class="flex mb-8 flex-col gap-2">
             <h2 class="text-2xl font-bold">Rooms</h2>
             <div class="flex my-2">
-                <a href="{{url()->previous()}}" class="font-bold"><- Go Back</a>
+                <a href="{{url()->previous()}}" class="font-bold">← Go Back</a>
             </div>
         </div>
         <form action="{{ route('admin.rooms.store') }}" method="post" enctype="multipart/form-data" class="max-w-3xl mx-auto w-full">

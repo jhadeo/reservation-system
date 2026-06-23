@@ -35,8 +35,6 @@ function updateTable(results) {
                 <td class="flex gap-2 justify-center">
                     <a href="#"
                         class="btn btn-neutral btn-xs edit-btn"
-                    <a href="#"
-                        class="btn btn-neutral btn-xs edit-btn"
                         data-action="/admin/room-types/${escapeAttributes(type.id)}"
                         data-type-name="${safeNameAttr}"
                         data-type-description="${safeDescAttr}">
@@ -47,7 +45,6 @@ function updateTable(results) {
                         data-action="/admin/room-types/${escapeAttributes(type.id)}"
                         data-type-name="${safeNameAttr}">
                         Delete
-                    </a>                        Delete
                     </a>
                 </td>
             </tr>
@@ -57,10 +54,13 @@ function updateTable(results) {
 }
 
 function openEditModal(button) {
-    document.getElementById("edit-form").action = button.dataset.action;
-    document.getElementById("edit-name").value = button.dataset.typeName;
+    const form = document.getElementById("edit-form");
+    form.action = button.dataset.action;
+
+    document.getElementById("edit-name").value = button.dataset.typeName ?? "";
     document.getElementById("edit-description").value =
-        button.dataset.typeDescription;
+        button.dataset.typeDescription ?? "";
+
     document.getElementById("edit_modal").showModal();
 }
 
@@ -90,8 +90,8 @@ const debouncedSearch = debounce(async (text) => {
         updateTable(results);
     } catch (error) {
         console.error("Search failed:", error);
-        // Optionally show user feedback, e.g.:
-        // document.querySelector(".t-body").innerHTML = `<tr><td colspan="4" class="text-center py-4 text-error">Search failed</td></tr>`;
+        document.querySelector(".t-body").innerHTML =
+            `<tr><td colspan="4" class="text-center py-4 text-error">Search failed</td></tr>`;
     }
 }, 500);
 document.getElementById("search").addEventListener("input", async (event) => {

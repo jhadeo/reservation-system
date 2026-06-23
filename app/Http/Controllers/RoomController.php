@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use App\Models\RoomType;
 use Illuminate\Support\Facades\Auth;
-use App\AccountType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -138,5 +137,30 @@ class RoomController extends Controller
         Log::info('Room deleted: ' . $room->id . ' by ' . Auth::user()->fullName);
         $room->delete();
         return redirect()->route('admin.rooms.index')->with('success', 'Room deleted successfully!');
+    }
+
+    public function search(Request $request)
+    {
+        if (! $request->expectsJson()) {
+            return redirect()->route('admin.rooms.index');
+        }
+
+        $search = $request->input('search');
+
+        $results = Room::with('roomType')
+            ->where('name', 'LIKE', "%{$search}%")
+            ->get();
+
+        $groupedRooms = $results
+            ->groupBy('room_type_id')
+            ->map(function ($rooms) {
+                return [
+                    'type_name' => $rooms->first()->roomType?->name ?? 'Untyped',
+                    'rooms' => $rooms->values(),
+                ];
+            })
+            ->values();
+
+        return response()->json($groupedRooms);
     }
 }

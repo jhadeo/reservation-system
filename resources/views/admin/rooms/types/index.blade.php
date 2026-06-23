@@ -159,5 +159,20 @@
         </div>
     </dialog>
 
+    @php
+        $hasCreateErrors = $errors->has('name') || $errors->has('description');
+    @endphp
+
+    @if($hasCreateErrors)
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+                const dlg = document.getElementById('create_modal');
+                if (dlg && typeof dlg.showModal === 'function') {
+                    dlg.showModal();
+                }
+            });
+        </script>
+    @endif
+
     @vite(['resources/js/room-types/index.js'])
 </x-layout>
