@@ -46,9 +46,9 @@ class DatabaseSeeder extends Seeder
             'account_type' => AccountType::Client,
         ]);
 
-        // $this->call([
-        //     RoomTypeSeeder::class,
-        //     RoomSeeder::class,
-        // ]);
+        $this->call([
+            RoomTypeSeeder::class,
+            RoomSeeder::class,
+        ]);
     }
 }

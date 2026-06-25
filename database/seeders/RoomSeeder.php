@@ -17,6 +17,7 @@ class RoomSeeder extends Seeder
 
         $rooms = [
             [
+                'room_id' => 'STD-101',
                 'name' => 'Standard 101',
                 'hourly_rate' => 25.00,
                 'max_pax' => 2,
@@ -26,6 +27,7 @@ class RoomSeeder extends Seeder
                 'photo' => null,
             ],
             [
+                'room_id' => 'STD-102',
                 'name' => 'Standard 102',
                 'hourly_rate' => 25.00,
                 'max_pax' => 2,
@@ -35,6 +37,7 @@ class RoomSeeder extends Seeder
                 'photo' => null,
             ],
             [
+                'room_id' => 'DLX-201',
                 'name' => 'Deluxe 201',
                 'hourly_rate' => 40.00,
                 'max_pax' => 3,
@@ -44,6 +47,7 @@ class RoomSeeder extends Seeder
                 'photo' => null,
             ],
             [
+                'room_id' => 'DLX-202',
                 'name' => 'Deluxe 202',
                 'hourly_rate' => 42.50,
                 'max_pax' => 3,
@@ -53,6 +57,7 @@ class RoomSeeder extends Seeder
                 'photo' => null,
             ],
             [
+                'room_id' => 'STE-301',
                 'name' => 'Suite 301',
                 'hourly_rate' => 65.00,
                 'max_pax' => 4,
@@ -62,6 +67,7 @@ class RoomSeeder extends Seeder
                 'photo' => null,
             ],
             [
+                'room_id' => 'CONF-A',
                 'name' => 'Conference A',
                 'hourly_rate' => 80.00,
                 'max_pax' => 10,

@@ -19,8 +19,16 @@ class RoomController extends Controller
     public function index()
     {
         return view('admin.rooms.index', [
-            'rooms' => Room::with('roomType')->get(),
+            'rooms' => Room::with('roomType')->paginate(15),
         ]);
+    }
+
+    //Index rooms for home page
+    public function indexHome()
+    {
+        $rooms = Room::all();
+        $room_types = RoomType::all();
+        return view('pages.rooms', ['rooms' => $rooms, 'room_types' => $room_types]);
     }
 
     /**

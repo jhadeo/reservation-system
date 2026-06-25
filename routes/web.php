@@ -6,6 +6,7 @@ use App\Http\Controllers\RegisteredGuestController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomTypeController;
+use App\Http\Controllers\StaffController;
 use App\Models\Reservation;
 use App\Models\Room;
 use App\Models\RoomType;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 //routes that don't need any authentication/middleware
 Route::get('/', function () {
     return view('pages.welcome');
-});
+})->name('landing');
 
 Route::get('/about', function () {
     return view('pages.about');
@@ -28,15 +29,9 @@ Route::get('/about', function () {
 Route::get('/contact', [ContactController::class, 'create']);
 Route::post('/contact', [ContactController::class, 'store']);
 
-Route::get('/rooms', function () {
-    $rooms = Room::all();
-    $room_types = RoomType::all();
-    return view('pages.rooms', ['rooms' => $rooms, 'room_types' => $room_types]);
-}); //refactor to use controllers
+Route::get('/rooms', [RoomController::class, 'indexHome']);
 
-Route::get('/reserve-slot', function () {
-    return view('reservations/reserve-room');
-});
+Route::get('/reserve-slot',[ReservationController::class,'create']);
 
 
 Route::middleware('guest')->group(function () {
@@ -70,16 +65,16 @@ Route::middleware('auth')->group(function () {
             $reservations = Reservation::whereIn('status', [ReservationStatus::Pending, ReservationStatus::Reserved, ReservationStatus::Active])
                 ->with('user', 'room')
                 ->latest('check_in_datetime')
-                ->get(); // wtf is this?
+                ->get();
             return view('admin/home', ['reservations' => $reservations]);
-        });
+        })->name('admin.home');
 
 
         Route::get('/rooms', [RoomController::class, 'index'])->name('admin.rooms.index');
         Route::get('/rooms/create', [RoomController::class, 'create'])->name('admin.rooms.create');
         Route::post('/rooms/create', [RoomController::class, 'store'])->name('admin.rooms.store');
         Route::get('/rooms/search', [RoomController::class, 'search'])->name('admin.rooms.search');
-        
+
         Route::get('/room-types', [RoomTypeController::class, 'index'])->name('admin.room-types');
         Route::post('/room-types/create', [RoomTypeController::class, 'store'])->name('admin.room-types.create');
         Route::get('/room-types/search', [RoomTypeController::class, 'search'])->name('admin.room-types.search');
@@ -91,5 +86,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/rooms/{room}/edit', [RoomController::class, 'update'])->name('admin.rooms.update');
         Route::delete('/rooms/{room}/delete', [RoomController::class, 'destroy'])->name('admin.rooms.destroy');
 
+        Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.index');
+        Route::get('/staff/{staff}', [StaffController::class,'show'])->name('admin.staff.show');
     });
 });

@@ -12,29 +12,18 @@ class ReservationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        switch (Auth::user()->account_type) {
-            case AccountType::Admin:
-                // admin logic
-                break;
-
-            case AccountType::Staff:
-                // staff logic
-                break;
-
-            case AccountType::Client:
-                // client logic
-                break;
-        }
-    }
+    public function index() {}
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //
+        if (Auth::check() && Auth::user()->account_type === AccountType::Admin) {
+            return redirect()->route('admin.home');
+        }
+
+        return view('reservations.reserve-room');
     }
 
     /**
