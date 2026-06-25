@@ -87,6 +87,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/rooms/{room}/delete', [RoomController::class, 'destroy'])->name('admin.rooms.destroy');
 
         Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.index');
-        Route::get('/staff/{staff}', [StaffController::class,'show'])->name('admin.staff.show');
+        Route::get('/staff/search', [StaffController::class,'search'])->name('admin.staff.search');
+        Route::put('/staff/{staff}/edit')->withTrashed()->name('admin.staff.update');
+        Route::delete('/staff/{staff}/delete')->withTrashed()->name('admin.staff.destroy');
     });
 });

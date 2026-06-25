@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class RoomTypeController extends Controller
 {
@@ -39,7 +40,7 @@ class RoomTypeController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => [
                 'required',
                 'string',
@@ -49,25 +50,14 @@ class RoomTypeController extends Controller
             'description' => 'required|string|min:5|max:255',
         ]);
 
-        RoomType::create($validated);
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator, 'create')
+                ->withInput();
+        }
+        RoomType::create($validator->validated());
 
         return redirect()->route('admin.room-types')->with('success', 'Room type successfully created.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(RoomType $roomType)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(RoomType $roomType)
-    {
-        //
     }
 
     /**
@@ -75,21 +65,32 @@ class RoomTypeController extends Controller
      */
     public function update(Request $request, RoomType $roomType)
     {
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|min:5|max:50',
             'description' => 'required|string|min:5|max:255',
         ]);
 
-        $roomType->fill($validated);
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator, 'edit')
+                ->withInput()
+                ->with('edit_room_type_id', $roomType->id);
+        }
 
-        if (!$roomType->isDirty()) {
-            return redirect()->route('admin.room-types')->with('info', 'No changes were made.');
+        $roomType->fill($validator->validated());
+
+        if (! $roomType->isDirty()) {
+            return redirect()
+                ->route('admin.room-types')
+                ->with('info', 'No changes were made.');
         }
 
         $roomType->save();
-        return redirect()->route('admin.room-types')->with('success', 'Details changed successfully.');
-    }
 
+        return redirect()
+            ->route('admin.room-types')
+            ->with('success', 'Details changed successfully.');
+    }
     /**
      * Remove the specified resource from storage.
      */

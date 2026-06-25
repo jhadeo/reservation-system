@@ -31,10 +31,10 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'account_type'=> AccountType::class,
+            'account_type' => AccountType::class,
         ];
     }
-
+    protected $appends = ['full_name'];
     public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);

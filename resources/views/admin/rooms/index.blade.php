@@ -87,6 +87,9 @@
                 </div>
             </div>
             @endforeach
+            <div class="mt-4">
+                {{ $rooms->links() }}
+            </div>
             @endif
         </div>
 

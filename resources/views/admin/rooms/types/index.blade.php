@@ -16,7 +16,7 @@
                             <path d="m21 21-4.3-4.3"></path>
                         </g>
                     </svg>
-                    <input type="search" id="search" placeholder="Search" data-url="{{ route('admin.room-types.search')}}"/>
+                    <input type="search" id="search" placeholder="Search" data-url="{{ route('admin.room-types.search')}}" />
                 </label>
                 <button class="btn btn-primary" onclick="create_modal.showModal()">+ New Room Type</button>
             </div>
@@ -77,6 +77,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="mt-4">
+            {{ $roomTypes->links() }}
+        </div>
         @endif
     </div>
 
@@ -93,11 +96,11 @@
 
                         <label class="label">Name<span class="text-red-500">*</span></label>
                         <input type="text" name="name" class="input w-full" placeholder="Name" value="{{ old('name') }}" />
-                        <x-forms.error name="name" />
+                        <x-forms.error name="name" bag="create" />
 
                         <label class="label">Description<span class="text-red-500">*</span></label>
                         <input type="text" name="description" class="input w-full" placeholder="Description" value="{{ old('description') }}" />
-                        <x-forms.error name="description" />
+                        <x-forms.error name="description" bag="create" />
 
                         <button type="submit" class="btn btn-primary mt-4">Create Room Type</button>
                     </fieldset>
@@ -113,18 +116,19 @@
             </form>
             <h3 class="text-lg font-bold">Edit <span id="room-name"></span></h3>
             <div class="my-4 w-full">
-                <form method="post" class="w-full" id="edit-form">
+                <form method="post" class="w-full" id="edit-form"
+                    action="{{ session('edit_room_type_id') ? route('admin.room-types.update', session('edit_room_type_id')) : '' }}">
                     @csrf
                     @method('put')
                     <fieldset class="fieldset p-4 w-full">
 
                         <label class="label">Name<span class="text-red-500">*</span></label>
                         <input type="text" name="name" id="edit-name" class="input w-full" placeholder="Name" value="{{ old('name') }}" />
-                        <x-forms.error name="name" />
+                        <x-forms.error name="name" bag="edit" />
 
                         <label class="label">Description<span class="text-red-500">*</span></label>
                         <input type="text" name="description" id="edit-description" class="input w-full" placeholder="Description" value="{{ old('description') }}" />
-                        <x-forms.error name="description" />
+                        <x-forms.error name="description" bag="edit" />
 
                         <button type="submit" class="btn btn-primary mt-4">Save changes</button>
                     </fieldset>
@@ -159,19 +163,20 @@
         </div>
     </dialog>
 
-    @php
-        $hasCreateErrors = $errors->has('name') || $errors->has('description');
-    @endphp
+    @if($errors->create->any())
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('create_modal')?.showModal();
+        });
+    </script>
+    @endif
 
-    @if($hasCreateErrors)
-        <script>
-            window.addEventListener('DOMContentLoaded', () => {
-                const dlg = document.getElementById('create_modal');
-                if (dlg && typeof dlg.showModal === 'function') {
-                    dlg.showModal();
-                }
-            });
-        </script>
+    @if($errors->edit->any())
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('edit_modal')?.showModal();
+        });
+    </script>
     @endif
 
     @vite(['resources/js/room-types/index.js'])

@@ -13,7 +13,9 @@ class StaffController extends Controller
      */
     public function index()
     {
-        $staffs = User::where('account_type', AccountType::Staff)->paginate(15);
+        $staffs = User::withTrashed()
+            ->where('account_type', AccountType::Staff)
+            ->paginate(15);
 
         return view('admin.staff.index', [
             'staffs' => $staffs
@@ -25,7 +27,8 @@ class StaffController extends Controller
     {
         $search = $request->input('search');
 
-        $staffs = User::where('account_type', AccountType::Staff)
+        $staffs = User::withTrashed()
+            ->where('account_type', AccountType::Staff)
             ->where(function ($query) use ($search) {
                 $query->where('first_name', 'LIKE', "%{$search}%")
                     ->orWhere('last_name', 'LIKE', "%{$search}%");
