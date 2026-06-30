@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\AccountType;
 use App\Models\User;
+use App\RegistrationSource;
 use Database\Seeders\RoomSeeder;
 use Database\Seeders\RoomTypeSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -20,31 +21,45 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::create([
-            'first_name' => 'System',
-            'last_name' => 'Admin',
-            'phone' => '09170000001',
-            'email' => 'admin@example.com',
-            'password' => 'password',
-            'account_type' => AccountType::Admin,
-        ]);
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'first_name' => 'System',
+                'last_name' => 'Admin',
+                'phone' => '09170000001',
+                'password' => 'password',
+                'account_type' => AccountType::Admin,
+                'registration_source' => RegistrationSource::Self,
+            ]
+        );
 
-        User::create([
-            'first_name' => 'Reservation',
-            'last_name' => 'Staff',
-            'phone' => '09170000002',
-            'email' => 'staff@example.com',
-            'password' => 'password',
-            'account_type' => AccountType::Staff,
-        ]);
-        User::create([
-            'first_name' => 'Hotel',
-            'last_name' => 'Client',
-            'phone' => '09170000003',
-            'email' => 'client@example.com',
-            'password' => 'password',
-            'account_type' => AccountType::Client,
-        ]);
+        $admin->update(['created_by' => $admin->id]);
+
+        User::updateOrCreate(
+            ['email' => 'staff@example.com'],
+            [
+                'first_name' => 'Reservation',
+                'last_name' => 'Staff',
+                'phone' => '09170000002',
+                'password' => 'password',
+                'account_type' => AccountType::Staff,
+                'registration_source' => RegistrationSource::Admin,
+                'created_by' => $admin->id,
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'client@example.com'],
+            [
+                'first_name' => 'Hotel',
+                'last_name' => 'Client',
+                'phone' => '09170000003',
+                'password' => 'password',
+                'account_type' => AccountType::Client,
+                'registration_source' => RegistrationSource::Self,
+                'created_by' => $admin->id,
+            ]
+        );
 
         $this->call([
             RoomTypeSeeder::class,

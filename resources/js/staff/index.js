@@ -101,6 +101,6 @@ const debouncedSearch = debounce(async (text) => {
 }, 500);
 
 document.getElementById("search").addEventListener("input", async (event) => {
-    const trimmed = event.target.value.trim();
+    const trimmed = event.target.value.trim().toLowerCase();
     debouncedSearch(trimmed);
 });
