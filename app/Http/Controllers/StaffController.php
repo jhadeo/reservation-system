@@ -34,13 +34,19 @@ class StaffController extends Controller
     //Search for a resource/s
     public function search(Request $request)
     {
-        $search = $request->input('search');
-
-        $staffs = User::withTrashed()
+        $staffs = User::query()->withTrashed()
             ->where('account_type', AccountType::Staff)
-            ->where(function ($query) use ($search) {
-                $query->where('first_name', 'LIKE', "%{$search}%")
-                    ->orWhere('last_name', 'LIKE', "%{$search}%");
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where(function ($q) use ($request) {
+                    $q->where('first_name', 'like', "%{$request->search}%")
+                        ->orWhere('last_name', 'like', "%{$request->search}%");
+                });
+            })
+            ->when($request->status === 'active', function ($query) {
+                $query->whereNull('deleted_at');
+            })
+            ->when($request->status === 'inactive', function ($query) {
+                $query->onlyTrashed();
             })
             ->get();
 
@@ -132,7 +138,7 @@ class StaffController extends Controller
                 ->route('admin.staff.index')
                 ->with('info', 'No changes were made.');
         }
-        
+
         $staff->save();
 
         return redirect()->back()->with('success', 'Staff details updated successfully.');

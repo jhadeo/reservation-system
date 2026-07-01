@@ -76,13 +76,15 @@ function openEditModal(button) {
 
 function openDeleteModal(button) {
     document.getElementById("delete-form").action = button.dataset.action;
-    document.getElementById("deact-type-name").textContent = button.dataset.typeName;
+    document.getElementById("deact-type-name").textContent =
+        button.dataset.typeName;
     document.getElementById("deact_modal").showModal();
 }
 
 function openActiveModal(button) {
     document.getElementById("restore-form").action = button.dataset.action;
-    document.getElementById("restore-type-name").textContent = button.dataset.typeName;
+    document.getElementById("restore-type-name").textContent =
+        button.dataset.typeName;
     document.getElementById("restore_modal").showModal();
 }
 
@@ -104,10 +106,10 @@ actions.addEventListener("click", (event) => {
     }
 });
 
-const debouncedSearch = debounce(async (text) => {
+const debouncedSearch = debounce(async (params) => {
     try {
         const url = document.getElementById("search").dataset.url;
-        const results = await search(url, text);
+        const results = await search(url, params);
         updateTable(results);
     } catch (error) {
         console.error("Search failed:", error);
@@ -118,5 +120,18 @@ const debouncedSearch = debounce(async (text) => {
 
 document.getElementById("search").addEventListener("input", async (event) => {
     const trimmed = event.target.value.trim().toLowerCase();
-    debouncedSearch(trimmed);
+    let params = new URLSearchParams();
+    params.append("search",trimmed);
+    debouncedSearch(params);
+});
+
+document.getElementById("staffFilter").addEventListener("change", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(document.getElementById("staffFilter"));
+    const searchText = document.getElementById("search").value.trim();
+    let params = new URLSearchParams();
+    params.append("search", searchText);
+    const status = formData.get('status');
+    params.append("status", status);
+    debouncedSearch(params);
 });

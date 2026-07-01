@@ -5,18 +5,32 @@
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-2xl font-bold">Staff</h2>
             <div class="flex gap-2">
+                <button class="btn" popovertarget="popover-1" style="anchor-name:--anchor-1">
+                    Filters <i class="fa-solid fa-angle-down"></i>
+                </button>
+                <div class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
+                    popover id="popover-1" style="position-anchor:--anchor-1">
+                    <form id="staffFilter" class="flex flex-col p-2 gap-2">
+                        <fieldset class="flex flex-col gap-2">
+                            <p class="text-sm">Staff Status</p>
+                            <div class="flex gap-1">
+                                <input type="radio" name="status" id="active" class="radio" value="active"/>
+                                <label for="active" class="label">Active</label>
+                            </div>
+                            <div class="flex gap-1">
+                                <input type="radio" name="status" id="inactive" class="radio"  value="inactive"/>
+                                <label for="inactive" class="label">Inactive</label>
+                            </div>
+                            <div class="flex gap-1">
+                                <input type="radio" name="status" id="any" class="radio" checked="checked" value="any"/>
+                                <label for="inactive" class="label">All Staff</label>
+                            </div>
+                        </fieldset>
+
+                    </form>
+                </div>
                 <label class="input">
-                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <g
-                            stroke-linejoin="round"
-                            stroke-linecap="round"
-                            stroke-width="2.5"
-                            fill="none"
-                            stroke="currentColor">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.3-4.3"></path>
-                        </g>
-                    </svg>
+                    <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="search" id="search" placeholder="Search" data-url="{{ route('admin.staff.search') }}" />
                 </label>
                 <button class="btn btn-primary" onclick="create_modal.showModal()">+ New Staff</a>

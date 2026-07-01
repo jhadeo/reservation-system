@@ -10,8 +10,9 @@ window.debounce = function debounce(fn, delay) {
     };
 };
 
-window.search = async function search(url, text = "") {
-    const response = await fetch(`${url}?search=${encodeURIComponent(text)}`, {
+window.search = async function search(url, params) {
+    const query = new URLSearchParams(params)
+    const response = await fetch(`${url}?${query}`, {
         headers: {
             Accept: "application/json",
         },

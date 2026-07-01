@@ -83,10 +83,10 @@ actions.addEventListener("click", (event) => {
     }
 });
 
-const debouncedSearch = debounce(async (text) => {
+const debouncedSearch = debounce(async (params) => {
     try {
         const url = document.getElementById("search").dataset.url;
-        const results = await search(url, text);
+        const results = await search(url, params);
         updateTable(results);
     } catch (error) {
         console.error("Search failed:", error);
@@ -96,5 +96,7 @@ const debouncedSearch = debounce(async (text) => {
 }, 500);
 document.getElementById("search").addEventListener("input", async (event) => {
     const trimmed = event.target.value.trim();
-    debouncedSearch(trimmed);
+    const params = new URLSearchParams();
+    params.append("search", trimmed);
+    debouncedSearch(params);
 });
