@@ -96,8 +96,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [RoomTypeController::class, 'index'])->name('index');
             Route::post('/create', [RoomTypeController::class, 'store'])->name('create');
             Route::get('/search', [RoomTypeController::class, 'search'])->name('search');
-            Route::put('/{roomType}/edit', [RoomTypeController::class, 'update'])->name('update');
+            Route::put('/{roomType}/edit', [RoomTypeController::class, 'update'])->withTrashed()->name('update');
             Route::delete('/{roomType}/delete', [RoomTypeController::class, 'destroy'])->name('destroy');
+            Route::post('/{roomType}/restore',[RoomTypeController::class,'restore'])->withTrashed()->name('restore');
         });
 
         Route::prefix('staff')->name('staff.')->group(function () {

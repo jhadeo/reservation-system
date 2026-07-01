@@ -34,6 +34,7 @@
                         <th>Type Name</th>
                         <th>Description</th>
                         <th>Rooms</th>
+                        <th>Status</th>
                         <th class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -48,19 +49,31 @@
                         </td>
 
                         <td><span class="badge badge-info">{{ $type->rooms_count }}</span></td>
+                        <td><span class="badge badge-{{$type->deleted_at ? 'error' : 'success'}}">{{ $type->deleted_at ? 'Inactive' : 'Active' }}</span></td>
                         <td class="flex gap-2 justify-center">
-                            <a href="#" class="btn btn-neutral btn-xs edit-btn"
+                            <button class="btn btn-neutral btn-xs edit-btn"
                                 data-action="{{ route('admin.room-types.update', $type) }}"
                                 data-type-name="{{ $type->name }}"
                                 data-type-description="{{ $type->description }}">
                                 Edit
-                            </a>
-                            <a href="#"
+                            </button>
+
+                            @if ($type->deleted_at)
+                            <button
+                                class="btn btn-success btn-xs restore-btn"
+                                data-action="{{ route('admin.room-types.restore', $type) }}"
+                                data-type-name="{{ $type->name }}">
+                                Restore
+                            </button>
+                            @else
+                            <button
                                 class="btn btn-error btn-xs delete-btn"
                                 data-action="{{ route('admin.room-types.destroy', $type) }}"
                                 data-type-name="{{ $type->name }}">
                                 Delete
-                            </a>
+                            </button>
+                            @endif
+
                         </td>
                     </tr>
                     @endforeach
@@ -152,6 +165,32 @@
             </div>
         </div>
     </dialog>
+
+    <dialog id="restore_modal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Restore Room Type</h3>
+
+            <p class="py-4">
+                Are you sure you want to restore
+                <span id="restore-type-name" class="font-semibold"></span>?
+            </p>
+
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn">Cancel</button>
+                </form>
+
+                <form id="restore-form" method="POST">
+                    @csrf
+
+                    <button type="submit" class="btn btn-success">
+                        Restore
+                    </button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+
 
     @if($errors->create->any())
     <script>

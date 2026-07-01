@@ -14,16 +14,16 @@
                         <fieldset class="flex flex-col gap-2">
                             <p class="text-sm">Staff Status</p>
                             <div class="flex gap-1">
-                                <input type="radio" name="status" id="active" class="radio" value="active"/>
+                                <input type="radio" name="status" id="active" class="radio" value="active" />
                                 <label for="active" class="label">Active</label>
                             </div>
                             <div class="flex gap-1">
-                                <input type="radio" name="status" id="inactive" class="radio"  value="inactive"/>
+                                <input type="radio" name="status" id="inactive" class="radio" value="inactive" />
                                 <label for="inactive" class="label">Inactive</label>
                             </div>
                             <div class="flex gap-1">
-                                <input type="radio" name="status" id="any" class="radio" checked="checked" value="any"/>
-                                <label for="inactive" class="label">All Staff</label>
+                                <input type="radio" name="status" id="any" class="radio" checked="checked" value="any" />
+                                <label for="any" class="label">All Staff</label>
                             </div>
                         </fieldset>
 

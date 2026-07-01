@@ -70,6 +70,12 @@ function openDeleteModal(button) {
     document.getElementById("delete_modal").showModal();
 }
 
+function openRestoreModal(button) {
+    document.getElementById("restore-form").action = button.dataset.action;
+    document.getElementById("restore-type-name").textContent = button.dataset.typeName;
+    document.getElementById("restore_modal").showModal();
+}
+
 const actions = document.querySelector(".t-body");
 actions.addEventListener("click", (event) => {
     const removeButton = event.target.closest(".delete-btn");
@@ -80,6 +86,11 @@ actions.addEventListener("click", (event) => {
     const editButton = event.target.closest(".edit-btn");
     if (editButton) {
         openEditModal(editButton);
+    }
+
+     const restoreButton = event.target.closest(".restore-btn");
+    if (restoreButton) {
+        openRestoreModal(restoreButton);
     }
 });
 

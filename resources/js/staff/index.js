@@ -122,6 +122,8 @@ document.getElementById("search").addEventListener("input", async (event) => {
     const trimmed = event.target.value.trim().toLowerCase();
     let params = new URLSearchParams();
     params.append("search",trimmed);
+    const status = new FormData(document.getElementById("staffFilter")).get("status");
+    if (status) params.append("status", status);
     debouncedSearch(params);
 });
 
@@ -132,6 +134,5 @@ document.getElementById("staffFilter").addEventListener("change", async (event) 
     let params = new URLSearchParams();
     params.append("search", searchText);
     const status = formData.get('status');
-    params.append("status", status);
-    debouncedSearch(params);
-});
+    if (status) params.append("status", status);
+    debouncedSearch(params);});
