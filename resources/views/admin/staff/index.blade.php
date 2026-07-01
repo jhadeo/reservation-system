@@ -70,11 +70,22 @@
                                     data-type-phone="{{ $staff->phone }}">
                                     Edit
                                 </button>
+                                @if ($staff->deleted_at)
+                                <button
+                                    class="btn btn-success btn-xs restore-btn"
+                                    data-type-name="{{ $staff->fullName }}"
+                                    data-action="{{ route('admin.staff.restore', $staff)}}">
+                                    Reactivate
+                                </button>
+                                @else
                                 <button
                                     class="btn btn-error btn-xs delete-btn"
-                                    data-type-name="{{ $staff->fullName }}">
+                                    data-type-name="{{ $staff->fullName }}"
+                                    data-action="{{ route('admin.staff.destroy', $staff)}}">
                                     Deactivate
                                 </button>
+                                @endif
+
                             </td>
                         </tr>
                         @endforeach
@@ -138,9 +149,7 @@
                 <h3 class="text-lg font-bold">Edit <span id="staff-name"></span></h3>
                 <div class="my-4 w-full">
                     <form method="post" class="w-full" id="edit-form"
-                        action="{{ session('edit_staff_id')
-                    ? route('admin.staff.update', session('edit_staff_id'))
-                    : '' }}">
+                        action="{{ session('edit_staff_id') ? route('admin.staff.update', session('edit_staff_id')) : '' }}">
                         @csrf
                         @method('put')
                         <fieldset class="fieldset p-4 w-full">
@@ -171,12 +180,12 @@
             </div>
         </dialog>
 
-        <dialog id="delete_modal" class="modal">
+        <dialog id="deact_modal" class="modal">
             <div class="modal-box">
                 <h3 class="font-bold text-lg">Deactivate Staff</h3>
                 <p class="py-4">
                     Are you sure you want to deactivate
-                    <span id="type-name" class="font-semibold"></span>?
+                    <span id="deact-type-name" class="font-semibold"></span>?
                 </p>
                 <div class="modal-action">
                     <form method="dialog">
@@ -185,11 +194,31 @@
                     <form id="delete-form" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-error">Deactivate</button>
+                        <button type="submit" class="btn btn-primary">Deactivate</button>
                     </form>
                 </div>
             </div>
         </dialog>
+
+        <dialog id="restore_modal" class="modal">
+            <div class="modal-box">
+                <h3 class="font-bold text-lg">Activate Staff</h3>
+                <p class="py-4">
+                    Are you sure you want to activate
+                    <span id="restore-type-name" class="font-semibold"></span>?
+                </p>
+                <div class="modal-action">
+                    <form method="dialog">
+                        <button class="btn">Cancel</button>
+                    </form>
+                    <form id="restore-form" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">Activate</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
+
 
         @if($errors->create->any())
         <script>
@@ -208,4 +237,4 @@
         @endif
 
         @vite(['resources/js/staff/index.js'])
-</x-layout></x-layout>
+</x-layout>

@@ -104,7 +104,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [StaffController::class, 'index'])->name('index');
             Route::post('/', [StaffController::class, 'store'])->name('store');
             Route::get('/search', [StaffController::class, 'search'])->name('search');
-            Route::put('/{staff}/edit')->withTrashed()->name('update');
+            Route::put('/{staff}/edit', [StaffController::class, 'update'])->name('update');
+            Route::delete('/{staff}/delete',[StaffController::class,'destroy'])->name('destroy');
+            Route::post('/{staff}/restore',[StaffController::class,'restore'])->withTrashed()->name('restore');
         });
     });
 });

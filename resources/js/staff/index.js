@@ -60,19 +60,30 @@ function openEditModal(button) {
     const form = document.getElementById("edit-form");
     form.action = button.dataset.action;
 
-    document.getElementById("staff-name").textContent = button.dataset.typeName ?? "";
-    document.getElementById("edit-first-name").value = button.dataset.typeFirstName ?? "";
-    document.getElementById("edit-last-name").value = button.dataset.typeLastName ?? "";
-    document.getElementById("edit-email").value = button.dataset.typeEmail ?? "";
-    document.getElementById("edit-phone").value = button.dataset.typePhone ?? "";
+    document.getElementById("staff-name").textContent =
+        button.dataset.typeName ?? "";
+    document.getElementById("edit-first-name").value =
+        button.dataset.typeFirstName ?? "";
+    document.getElementById("edit-last-name").value =
+        button.dataset.typeLastName ?? "";
+    document.getElementById("edit-email").value =
+        button.dataset.typeEmail ?? "";
+    document.getElementById("edit-phone").value =
+        button.dataset.typePhone ?? "";
 
     document.getElementById("edit_modal").showModal();
 }
 
 function openDeleteModal(button) {
     document.getElementById("delete-form").action = button.dataset.action;
-    document.getElementById("type-name").textContent = button.dataset.typeName;
-    document.getElementById("delete_modal").showModal();
+    document.getElementById("deact-type-name").textContent = button.dataset.typeName;
+    document.getElementById("deact_modal").showModal();
+}
+
+function openActiveModal(button) {
+    document.getElementById("restore-form").action = button.dataset.action;
+    document.getElementById("restore-type-name").textContent = button.dataset.typeName;
+    document.getElementById("restore_modal").showModal();
 }
 
 const actions = document.querySelector(".t-body");
@@ -85,6 +96,11 @@ actions.addEventListener("click", (event) => {
     const editButton = event.target.closest(".edit-btn");
     if (editButton) {
         openEditModal(editButton);
+    }
+
+    const restoreButton = event.target.closest(".restore-btn");
+    if (restoreButton) {
+        openActiveModal(restoreButton);
     }
 });
 

@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class StaffController extends Controller
 {
@@ -102,14 +102,6 @@ class StaffController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $staff)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, User $staff)
@@ -122,6 +114,18 @@ class StaffController extends Controller
      */
     public function destroy(User $staff)
     {
-        //
+        Log::info('Staff deactivated: ' . $staff->id . ' by ' . Auth::user()->fullName);
+        $staff->delete();
+        return redirect()->route('admin.staff.index')->with('success', 'Staff deactivated successfully.');
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore(User $staff)
+    {
+        Log::info('Staff activated: ' . $staff->id . ' by ' . Auth::user()->fullName);
+        $staff->restore();
+        return redirect()->route('admin.staff.index')->with('success', 'Staff activated successfully.');
     }
 }
