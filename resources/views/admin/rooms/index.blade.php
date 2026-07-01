@@ -1,4 +1,4 @@
-<x-layout title="Rooms">
+<x-layout title="Manage Rooms">
     <x-partials.admin.nav :name="auth()->user()->full_name" />
 
     <div class="p-6">

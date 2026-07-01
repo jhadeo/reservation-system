@@ -1,4 +1,4 @@
-<x-layout title="Staff">
+<x-layout title="Manage Staff">
     <x-partials.admin.nav :name="auth()->user()->full_name" />
 
     <div class="p-6">
@@ -28,7 +28,6 @@
 
         @if($staffs->isEmpty())
         <div class="flex items-center justify-center min-h-96">
-            <div class="t-body"></div>
             <div class="card bg-base-200 shadow-xl p-8 text-center max-w-md ">
                 <h3 class="card-title justify-center mb-4">Get Started</h3>
                 <p class="mb-6 text-sm text-gray-600">Create staff to manage your staff.</p>
@@ -156,21 +155,21 @@
                             <div class="flex gap-2">
                                 <div>
                                     <label class="label">First Name<span class="text-red-500">*</span></label>
-                                    <input type="text" name="first_name" id="edit-first-name" class="input w-full" placeholder="Ex: Juan" />
+                                    <input type="text" name="first_name" id="edit-first-name" class="input w-full" placeholder="Ex: Juan" value="{{ old('first_name') }}" />
                                     <x-forms.error name="first_name" bag="edit" />
                                 </div>
                                 <div>
                                     <label class="label">Last Name<span class="text-red-500">*</span></label>
-                                    <input type="text" name="last_name" id="edit-last-name" class="input w-full" placeholder="Ex: Dela Cruz" />
+                                    <input type="text" name="last_name" id="edit-last-name" class="input w-full" placeholder="Ex: Dela Cruz" value="{{ old('last_name') }}" />
                                     <x-forms.error name="last_name" bag="edit" />
                                 </div>
                             </div>
                             <label class="label">Email<span class="text-red-500">*</span></label>
-                            <input type="email" name="email" id="edit-email" class="input w-full" placeholder="Ex: juan@gmail.com" />
+                            <input type="email" name="email" id="edit-email" class="input w-full" placeholder="Ex: juan@gmail.com" value="{{ old('email') }}" />
                             <x-forms.error name="email" bag="edit" />
 
                             <label class="label">Mobile Number<span class="text-red-500">*</span></label>
-                            <input type="text" name="phone" id="edit-phone" class="input w-full" placeholder="Ex: 09123456789" />
+                            <input type="text" name="phone" id="edit-phone" class="input w-full" placeholder="Ex: 09123456789" value="{{ old('phone') }}" />
                             <x-forms.error name="phone" bag="edit" />
 
                             <button type="submit" class="btn btn-primary mt-4">Save changes</button>

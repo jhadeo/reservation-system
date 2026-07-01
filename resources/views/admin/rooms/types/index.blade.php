@@ -1,4 +1,4 @@
-<x-layout title="Room Type">
+<x-layout title="Manage Room Types">
     <x-partials.admin.nav :name="auth()->user()->full_name" />
     <div class="p-6">
         <div class="flex justify-between items-center mb-8">

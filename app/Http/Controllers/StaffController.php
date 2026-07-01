@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class StaffController extends Controller
 {
@@ -106,7 +107,35 @@ class StaffController extends Controller
      */
     public function update(Request $request, User $staff)
     {
-        //
+        if ($staff->account_type !== AccountType::Staff) {
+            return redirect()->route('admin.staff.index')->with('info', 'Staff update failed, please try again');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'first_name' => ['required'],
+            'last_name' => ['required'],
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($staff->id)],
+            'phone' => ['required', 'digits:11', 'regex:/^0[0-9]{10}$/'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator, 'edit')
+                ->withInput()
+                ->with('edit_staff_id', $staff->id);
+        }
+
+        $staff->fill($validator->validated());
+
+        if (! $staff->isDirty()) {
+            return redirect()
+                ->route('admin.staff.index')
+                ->with('info', 'No changes were made.');
+        }
+        
+        $staff->save();
+
+        return redirect()->back()->with('success', 'Staff details updated successfully.');
     }
 
     /**
@@ -114,6 +143,9 @@ class StaffController extends Controller
      */
     public function destroy(User $staff)
     {
+        if ($staff->account_type !== AccountType::Staff) {
+            return redirect()->route('admin.staff.index')->with('info', 'Staff deactivation failed, please try again');
+        }
         Log::info('Staff deactivated: ' . $staff->id . ' by ' . Auth::user()->fullName);
         $staff->delete();
         return redirect()->route('admin.staff.index')->with('success', 'Staff deactivated successfully.');
@@ -124,6 +156,9 @@ class StaffController extends Controller
      */
     public function restore(User $staff)
     {
+        if ($staff->account_type !== AccountType::Staff) {
+            return redirect()->route('admin.staff.index')->with('info', 'Staff activation failed, please try again');
+        }
         Log::info('Staff activated: ' . $staff->id . ' by ' . Auth::user()->fullName);
         $staff->restore();
         return redirect()->route('admin.staff.index')->with('success', 'Staff activated successfully.');
