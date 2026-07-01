@@ -14,8 +14,9 @@
 
                     <label class="label">Password</label>
                     <input type="password" name="password" class="input w-sm" placeholder="Password" />
+                    <a href="/forgot-password">Forgot your password?</p>
 
-                    <button type="submit" class="btn btn-primary mt-4">Login</button>
+                    <button type="submit" class="btn btn-primary mt-4 w-sm">Login</button>
                     <a href="/register" class="btn btn-secondary mt-4">Register</a>
                 </fieldset>
             </form>

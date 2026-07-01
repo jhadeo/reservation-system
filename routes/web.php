@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\SessionsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\RegisteredGuestController;
@@ -31,21 +32,29 @@ Route::post('/contact', [ContactController::class, 'store']);
 
 Route::get('/rooms', [RoomController::class, 'indexHome']);
 
-Route::get('/reserve-slot',[ReservationController::class,'create']);
+Route::get('/reserve-slot', [ReservationController::class, 'create']);
 
 
 Route::middleware('guest')->group(function () {
-    Route::get('/register', [RegisteredGuestController::class, 'create']);
-    Route::post('/register', [RegisteredGuestController::class, 'store']);
+    Route::get('/register', [RegisteredGuestController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredGuestController::class, 'store'])->name('register.store');
 
-    Route::get('/login', [SessionsController::class, 'create']);
-    Route::post('/login', [SessionsController::class, 'store']);
+    Route::get('/login', [SessionsController::class, 'create'])->name('login');
+    Route::post('/login', [SessionsController::class, 'store'])->name('login.store');
+
+    Route::get('/reset-password', [ResetPasswordController::class, 'edit'])->name('password.reset');
+    Route::post('/reset-password', [ResetPasswordController::class, 'update'])->name('password.update');
+
+    Route::get('/forgot-password', [ResetPasswordController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [ResetPasswordController::class, 'store'])->name('password.email');
 });
 
 
 Route::middleware('auth')->group(function () {
     Route::delete('/logout', [SessionsController::class, 'destroy']);
 
+
+    //Client
     Route::middleware('role:client')->prefix('client')->group(function () {
         Route::get('/home', function () {
             $reservations = Reservation::where('user_id', auth()->id())->get();
@@ -53,13 +62,16 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    //Staff
     Route::middleware('role:staff')->prefix('staff')->group(function () {
         Route::get('/home', function () {
             return view('staff/home');
         });
     });
 
-    Route::middleware('role:admin')->prefix('admin')->group(function () {
+
+    //Admin
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/home', function () {
             $reservations = Reservation::whereIn('status', [ReservationStatus::Pending, ReservationStatus::Reserved, ReservationStatus::Active])
@@ -67,28 +79,32 @@ Route::middleware('auth')->group(function () {
                 ->latest('check_in_datetime')
                 ->get();
             return view('admin/home', ['reservations' => $reservations]);
-        })->name('admin.home');
+        })->name('home');
 
+        Route::prefix('rooms')->name('rooms.')->group(function () {
+            Route::get('/', [RoomController::class, 'index'])->name('index');
+            Route::get('/create', [RoomController::class, 'create'])->name('create');
+            Route::post('/create', [RoomController::class, 'store'])->name('store');
+            Route::get('/search', [RoomController::class, 'search'])->name('search');
+            Route::get('/{room}', [RoomController::class, 'show'])->name('show');
+            Route::get('/{room}/edit', [RoomController::class, 'edit'])->name('edit');
+            Route::put('/{room}/edit', [RoomController::class, 'update'])->name('update');
+            Route::delete('/{room}/delete', [RoomController::class, 'destroy'])->name('destroy');
+        });
 
-        Route::get('/rooms', [RoomController::class, 'index'])->name('admin.rooms.index');
-        Route::get('/rooms/create', [RoomController::class, 'create'])->name('admin.rooms.create');
-        Route::post('/rooms/create', [RoomController::class, 'store'])->name('admin.rooms.store');
-        Route::get('/rooms/search', [RoomController::class, 'search'])->name('admin.rooms.search');
+        Route::prefix('room-types')->name('room-types.')->group(function () {
+            Route::get('/', [RoomTypeController::class, 'index'])->name('index');
+            Route::post('/create', [RoomTypeController::class, 'store'])->name('create');
+            Route::get('/search', [RoomTypeController::class, 'search'])->name('search');
+            Route::put('/{roomType}/edit', [RoomTypeController::class, 'update'])->name('update');
+            Route::delete('/{roomType}/delete', [RoomTypeController::class, 'destroy'])->name('destroy');
+        });
 
-        Route::get('/room-types', [RoomTypeController::class, 'index'])->name('admin.room-types');
-        Route::post('/room-types/create', [RoomTypeController::class, 'store'])->name('admin.room-types.create');
-        Route::get('/room-types/search', [RoomTypeController::class, 'search'])->name('admin.room-types.search');
-        Route::put('/room-types/{roomType}/edit', [RoomTypeController::class, 'update'])->name('admin.room-types.update');
-        Route::delete('/room-types/{roomType}/delete', [RoomTypeController::class, 'destroy'])->name('admin.room-types.destroy');
-
-        Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('admin.rooms.show');
-        Route::get('/rooms/{room}/edit', [RoomController::class, 'edit'])->name('admin.rooms.edit');
-        Route::put('/rooms/{room}/edit', [RoomController::class, 'update'])->name('admin.rooms.update');
-        Route::delete('/rooms/{room}/delete', [RoomController::class, 'destroy'])->name('admin.rooms.destroy');
-
-        Route::get('/staff', [StaffController::class, 'index'])->name('admin.staff.index');
-        Route::get('/staff/search', [StaffController::class,'search'])->name('admin.staff.search');
-        Route::put('/staff/{staff}/edit')->withTrashed()->name('admin.staff.update');
-        Route::delete('/staff/{staff}/delete')->withTrashed()->name('admin.staff.destroy');
+        Route::prefix('staff')->name('staff.')->group(function () {
+            Route::get('/', [StaffController::class, 'index'])->name('index');
+            Route::post('/', [StaffController::class, 'store'])->name('store');
+            Route::get('/search', [StaffController::class, 'search'])->name('search');
+            Route::put('/{staff}/edit')->withTrashed()->name('update');
+        });
     });
 });
