@@ -34,6 +34,10 @@ class StaffController extends Controller
     //Search for a resource/s
     public function search(Request $request)
     {
+        if (!$request->expectsJson()) {
+            return redirect()->route('admin.staff.index');
+        }
+
         $staffs = User::query()->withTrashed()
             ->where('account_type', AccountType::Staff)
             ->when($request->filled('search'), function ($query) use ($request) {

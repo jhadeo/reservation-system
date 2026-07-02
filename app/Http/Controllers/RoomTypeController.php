@@ -28,11 +28,21 @@ class RoomTypeController extends Controller
         if (!$request->expectsJson()) {
             return redirect()->route('admin.room-types.index');
         }
-        $search = $request->input('search');
 
-        $results = RoomType::withCount('rooms')->where('name', 'LIKE', "%{$search}%")->when($request->status === '')->get();
+        $rooms = RoomType::query()
+            ->withCount('rooms')->withTrashed()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('name', 'like', "%{$request->search}%");
+            })
+            ->when($request->status === 'active', function ($query) {
+                $query->whereNull('deleted_at');
+            })
+            ->when($request->status === 'inactive', function ($query) {
+                $query->onlyTrashed();
+            })
+            ->get();
 
-        return response()->json($results);
+        return response()->json($rooms);
     }
 
     /**
@@ -100,7 +110,7 @@ class RoomTypeController extends Controller
             return redirect()->route('admin.room-types.index')->with('info', 'Cannot delete a room type that still has rooms assigned.');
         }
         $roomType->delete();
-        Log::info('Room type deleted: ' . $roomType->id .' - '. $roomType->name . ' by ' . Auth::user()->fullName);
+        Log::info('Room type deleted: ' . $roomType->id . ' - ' . $roomType->name . ' by ' . Auth::user()->fullName);
         return redirect()->route('admin.room-types.index')->with('success', 'Successfully deleted room type.');
     }
 
@@ -109,8 +119,14 @@ class RoomTypeController extends Controller
      */
     public function restore(RoomType $roomType)
     {
-        Log::info('Room type restored: ' . $roomType->id .' - '. $roomType->name . ' by ' . Auth::user()->fullName);
+        if (RoomType::where('name', $roomType->name)->whereNull('deleted_at')->exists()) {
+            return redirect()
+                ->route('admin.room-types.index')
+                ->with('info', 'Cannot restore a room type whose name is already in use.');
+        }
+
         $roomType->restore();
+        Log::info('Room type restored: ' . $roomType->id . ' - ' . $roomType->name . ' by ' . Auth::user()->fullName);
         return redirect()->route('admin.room-types.index')->with('success', 'Successfully restored room type.');
     }
 }

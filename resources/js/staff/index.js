@@ -1,57 +1,79 @@
 function updateTable(results) {
     const tbody = document.querySelector(".t-body");
+
     if (results.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="5" class="text-center py-4">No results found</td>
+                <td colspan="5" class="text-center py-4">
+                    No results found
+                </td>
             </tr>
         `;
         return;
     }
+
     tbody.innerHTML = results
         .map((staff) => {
-            // full_name is an accessor so concatenate from the real columns
             const fullName = `${staff.first_name} ${staff.last_name}`;
+
             const safeName = escapeHtml(fullName);
             const safePhone = escapeHtml(staff.phone);
             const safeEmail = escapeHtml(staff.email);
+
             const safeNameAttr = escapeAttributes(fullName);
             const safeFirstAttr = escapeAttributes(staff.first_name);
             const safeLastAttr = escapeAttributes(staff.last_name);
             const safePhoneAttr = escapeAttributes(staff.phone);
             const safeEmailAttr = escapeAttributes(staff.email);
+
             const isActive = !staff.deleted_at;
 
-            return `
-            <tr>
-                <td class="font-semibold">${safeName}</td>
-                <td class="font-semibold">${safePhone}</td>
-                <td class="font-semibold">${safeEmail}</td>
-                <td class="font-semibold">
-                    <span class="badge ${isActive ? "badge-success" : "badge-error"}">
-                        ${isActive ? "Active" : "Inactive"}
-                    </span>
-                </td>
-                <td class="flex gap-2 justify-center">
-                    <button
-                        class="btn btn-neutral btn-xs edit-btn"
-                        data-action="/admin/staff/${staff.id}"
-                        data-type-name="${safeNameAttr}"
-                        data-type-first-name="${safeFirstAttr}"
-                        data-type-last-name="${safeLastAttr}"
-                        data-type-email="${safeEmailAttr}"
-                        data-type-phone="${safePhoneAttr}">
-                        Edit
-                    </button>
+            const actionButton = isActive
+                ? `
                     <button
                         class="btn btn-error btn-xs delete-btn"
-                        data-action="/admin/staff/${staff.id}"
+                        data-action="/admin/staff/${staff.id}/delete"
                         data-type-name="${safeNameAttr}">
                         Deactivate
                     </button>
-                </td>
-            </tr>
-        `;
+                `
+                : `
+                    <button
+                        class="btn btn-success btn-xs restore-btn"
+                        data-action="/admin/staff/${staff.id}/restore"
+                        data-type-name="${safeNameAttr}">
+                        Reactivate
+                    </button>
+                `;
+
+            return `
+                <tr>
+                    <td class="font-semibold">${safeName}</td>
+                    <td class="font-semibold">${safePhone}</td>
+                    <td class="font-semibold">${safeEmail}</td>
+                    <td class="font-semibold">
+                        <span class="badge ${
+                            isActive ? "badge-success" : "badge-error"
+                        }">
+                            ${isActive ? "Active" : "Inactive"}
+                        </span>
+                    </td>
+                    <td class="flex gap-2 justify-center">
+                        <button
+                            class="btn btn-neutral btn-xs edit-btn"
+                            data-action="/admin/staff/${staff.id}/edit"
+                            data-type-name="${safeNameAttr}"
+                            data-type-first-name="${safeFirstAttr}"
+                            data-type-last-name="${safeLastAttr}"
+                            data-type-email="${safeEmailAttr}"
+                            data-type-phone="${safePhoneAttr}">
+                            Edit
+                        </button>
+
+                        ${actionButton}
+                    </td>
+                </tr>
+            `;
         })
         .join("");
 }
@@ -121,18 +143,23 @@ const debouncedSearch = debounce(async (params) => {
 document.getElementById("search").addEventListener("input", async (event) => {
     const trimmed = event.target.value.trim().toLowerCase();
     let params = new URLSearchParams();
-    params.append("search",trimmed);
-    const status = new FormData(document.getElementById("staffFilter")).get("status");
+    params.append("search", trimmed);
+    const status = new FormData(document.getElementById("staffFilter")).get(
+        "status",
+    );
     if (status) params.append("status", status);
     debouncedSearch(params);
 });
 
-document.getElementById("staffFilter").addEventListener("change", async (event) => {
-    event.preventDefault();
-    const formData = new FormData(document.getElementById("staffFilter"));
-    const searchText = document.getElementById("search").value.trim();
-    let params = new URLSearchParams();
-    params.append("search", searchText);
-    const status = formData.get('status');
-    if (status) params.append("status", status);
-    debouncedSearch(params);});
+document
+    .getElementById("staffFilter")
+    .addEventListener("change", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(document.getElementById("staffFilter"));
+        const searchText = document.getElementById("search").value.trim();
+        let params = new URLSearchParams();
+        params.append("search", searchText);
+        const status = formData.get("status");
+        if (status) params.append("status", status);
+        debouncedSearch(params);
+    });

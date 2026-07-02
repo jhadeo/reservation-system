@@ -4,6 +4,30 @@
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-2xl font-bold">Room Types</h2>
             <div class="flex gap-2">
+                <button class="btn" popovertarget="popover-1" style="anchor-name:--anchor-1">
+                    Filters <i class="fa-solid fa-angle-down"></i>
+                </button>
+                <div class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
+                    popover id="popover-1" style="position-anchor:--anchor-1">
+                    <form id="typeFilter" class="flex flex-col p-2 gap-2">
+                        <fieldset class="flex flex-col gap-2">
+                            <p class="text-sm">Room Type Status</p>
+                            <hr class="label">
+                            <div class="flex gap-1">
+                                <input type="radio" name="status" id="active" class="radio" value="active" />
+                                <label for="active" class="label">Active</label>
+                            </div>
+                            <div class="flex gap-1">
+                                <input type="radio" name="status" id="inactive" class="radio" value="inactive" />
+                                <label for="inactive" class="label">Inactive</label>
+                            </div>
+                            <div class="flex gap-1">
+                                <input type="radio" name="status" id="any" class="radio" checked="checked" value="any" />
+                                <label for="any" class="label">All Room Types</label>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
                 <label class="input">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="search" id="search" placeholder="Search" data-url="{{ route('admin.room-types.search')}}" />

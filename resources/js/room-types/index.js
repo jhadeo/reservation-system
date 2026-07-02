@@ -1,5 +1,6 @@
 function updateTable(results) {
     const tbody = document.querySelector(".t-body");
+
     if (results.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -10,49 +11,70 @@ function updateTable(results) {
         `;
         return;
     }
+
     tbody.innerHTML = results
         .map((type) => {
-            // escapeHtml  → safe for tag text content
-            // escapeAttributes → safe for quoted attribute values
             const safeName = escapeHtml(type.name);
             const safeDescription = escapeHtml(type.description);
             const safeNameAttr = escapeAttributes(type.name);
             const safeDescAttr = escapeAttributes(type.description);
 
-            return `
-            <tr>
-                <td class="font-semibold">${safeName}</td>
-                <td class="font-semibold">
-                    <div class="max-w-xs truncate" title="${safeDescAttr}">
-                        ${safeDescription}
-                    </div>
-                </td>
-                <td>
-                    <span class="badge badge-info">
-                        ${type.rooms_count ?? 0}
-                    </span>
-                </td>
-                <td class="flex gap-2 justify-center">
+            const isDeleted = !!type.deleted_at;
+
+            const status = `
+                <span class="badge ${isDeleted ? "badge-error" : "badge-success"}">
+                    ${isDeleted ? "Inactive" : "Active"}
+                </span>
+            `;
+
+            const actionButton = isDeleted
+                ? `
                     <a href="#"
-                        class="btn btn-neutral btn-xs edit-btn"
-                        data-action="/admin/room-types/${type.id}/edit"
-                        data-type-name="${safeNameAttr}"
-                        data-type-description="${safeDescAttr}">
-                        Edit
+                        class="btn btn-success btn-xs restore-btn"
+                        data-action="/admin/room-types/${type.id}/restore"
+                        data-type-name="${safeNameAttr}">
+                        Restore
                     </a>
+                `
+                : `
                     <a href="#"
                         class="btn btn-error btn-xs delete-btn"
                         data-action="/admin/room-types/${type.id}/delete"
                         data-type-name="${safeNameAttr}">
                         Delete
                     </a>
-                </td>
-            </tr>
-        `;
+                `;
+
+            return `
+                <tr>
+                    <td class="font-semibold">${safeName}</td>
+                    <td class="font-semibold">
+                        <div class="max-w-xs truncate" title="${safeDescAttr}">
+                            ${safeDescription}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-info">
+                            ${type.rooms_count ?? 0}
+                        </span>
+                    </td>
+                    <td>${status}</td>
+                    <td class="flex gap-2 justify-center">
+                        <a href="#"
+                            class="btn btn-neutral btn-xs edit-btn"
+                            data-action="/admin/room-types/${type.id}/edit"
+                            data-type-name="${safeNameAttr}"
+                            data-type-description="${safeDescAttr}">
+                            Edit
+                        </a>
+
+                        ${actionButton}
+                    </td>
+                </tr>
+            `;
         })
         .join("");
 }
-
 function openEditModal(button) {
     const form = document.getElementById("edit-form");
     form.action = button.dataset.action;
@@ -105,9 +127,21 @@ const debouncedSearch = debounce(async (params) => {
             `<tr><td colspan="4" class="text-center py-4 text-error">Search failed</td></tr>`;
     }
 }, 500);
+
 document.getElementById("search").addEventListener("input", async (event) => {
     const trimmed = event.target.value.trim();
     const params = new URLSearchParams();
     params.append("search", trimmed);
+    debouncedSearch(params);
+});
+
+document.getElementById("typeFilter").addEventListener("change", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(document.getElementById("typeFilter"));
+    const searchText = document.getElementById("search").value.trim();
+    let params = new URLSearchParams();
+    params.append("search", searchText);
+    const status = formData.get("status");
+    if (status) params.append("status", status);
     debouncedSearch(params);
 });
